@@ -25,13 +25,15 @@ self.addEventListener('fetch', (event) => {
   if (request.mode === 'navigate') {
     // Pages: fresh when online, the cached app when offline.
     event.respondWith(
-      fetch(request).catch(async () => (await caches.match(request, { ignoreSearch: true })) || caches.match(BASE)),
+      fetch(request).catch(async () => (await caches.match(request, { ignoreSearch: true, ignoreVary: true })) || caches.match(BASE, { ignoreVary: true })),
     );
     return;
   }
   // Files with a content hash never change: cache first, then keep anything new for next time.
+  // ignoreVary: servers often send "Vary: Origin", and scripts loaded as modules carry an Origin
+  // header that the precache requests did not, so a strict match would miss while offline.
   event.respondWith(
-    caches.match(request).then((hit) => hit || fetch(request).then((response) => {
+    caches.match(request, { ignoreVary: true }).then((hit) => hit || fetch(request).then((response) => {
       if (response.ok && response.type === 'basic') {
         const copy = response.clone();
         caches.open(CACHE).then((cache) => cache.put(request, copy));

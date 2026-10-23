@@ -25,4 +25,4 @@
 Screenshots: `design-{phone,desktop}-{light,dark}.png`, logo: `logo-512.png`.
 
 ## Bugs found and fixed
-- None found in this step.
+- CI typecheck failed: the browser tests use `document`, but the TypeScript settings for test files only had Node types. Added the DOM library to `tsconfig.node.json`. Root cause: the typecheck was not re-run after the new test file was added; `npm run check` (typecheck, tests, build, browser tests) is now run before every push.

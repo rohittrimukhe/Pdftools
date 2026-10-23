@@ -1,4 +1,5 @@
 import { Page, TopBar } from '../../app/shell/AppShell';
+import { adsOn } from '../../ads/config';
 import './about.css';
 
 /** Plain-language privacy policy. Update it in the same change that adds anything it describes. */
@@ -15,7 +16,14 @@ export function Privacy() {
         <h2>Network use</h2>
         <p>Your device downloads the app itself (pages, scripts, fonts) from our website. After that, the tools work without internet. We do not use analytics or tracking.</p>
         <h2>Advertising</h2>
-        <p>Happy PDF currently shows no ads. If we add ads to keep the app free, they will only appear outside your work (never while a document is open), you will be asked for consent where the law requires it, and this policy will be updated first.</p>
+        {adsOn() ? (
+          <>
+            <p>To keep Happy PDF free, some screens show ads from Google AdSense: Home, Recent, and under a finished file. Ads never appear while a document is open or being processed, and they never receive your files or their contents.</p>
+            <p>Google may use cookies to show and measure ads, and to personalise them unless you choose “Non-personalised ads only” in Settings. Visitors in the EU, UK and Switzerland are asked for consent first. See how Google uses information at policies.google.com/technologies/partner-sites.</p>
+          </>
+        ) : (
+          <p>Happy PDF currently shows no ads. If we add ads to keep the app free, they will only appear outside your work (never while a document is open), you will be asked for consent where the law requires it, and this policy will be updated first.</p>
+        )}
         <h2>Contact</h2>
         <p>Questions about privacy: open an issue at github.com/rohittrimukhe/Pdftools.</p>
       </article>

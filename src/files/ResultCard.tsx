@@ -7,6 +7,7 @@ import { baseName, canShare, safeFileName, saveFile, shareFile } from '../platfo
 import { UploadBadge } from '../privacy/UploadBadge';
 import type { UploadSnapshot } from '../privacy/uploadMonitor';
 import { addRecent } from './recent';
+import { AdSlot } from '../ads/AdSlot';
 import './result.css';
 
 export interface ResultCardProps {
@@ -48,6 +49,7 @@ export function ResultCard({ blob, name, tool, since, summary }: ResultCardProps
   };
 
   return (
+    <>
     <section className="hp-card result" aria-labelledby="result-title" aria-live="polite">
       <div className="result__head">
         <CheckCircle2 aria-hidden size={28} className="result__ok" />
@@ -72,5 +74,7 @@ export function ResultCard({ blob, name, tool, since, summary }: ResultCardProps
         {canShare(blob, finalName) && <Button size="lg" variant="outlined" icon={<Share2 aria-hidden size={20} />} onClick={share}>Share</Button>}
       </div>
     </section>
+    {tool && <AdSlot placement="result" />}
+    </>
   );
 }

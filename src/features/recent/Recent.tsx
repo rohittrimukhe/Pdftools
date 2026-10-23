@@ -9,6 +9,7 @@ import { RETAIN_DAYS, clearRecent, keepRecent, listRecent, onRecentChange, remov
 import { formatBytes } from '../../lib/format';
 import { canShare, saveFile, shareFile } from '../../platform/save';
 import { findTool } from '../tools/catalog';
+import { AdSlot } from '../../ads/AdSlot';
 import './recent.css';
 
 const when = new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' });
@@ -66,6 +67,7 @@ export function Recent() {
           </div>
         </>
       )}
+      <AdSlot placement="recent" />
       <Sheet
         open={confirmClear}
         onClose={() => setConfirmClear(false)}

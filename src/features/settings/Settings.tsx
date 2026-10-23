@@ -5,6 +5,7 @@ import { Link } from '../../app/router';
 import { Button, Chip, Switch } from '../../design/ui';
 import { useToast } from '../../design/toast';
 import { RETAIN_DAYS, clearRecent, keepRecent, setKeepRecent } from '../../files/recent';
+import { adsOn, nonPersonalisedOnly, setNonPersonalisedOnly } from '../../ads/config';
 import { useTheme, type ThemeChoice } from '../../app/theme';
 import './settings.css';
 
@@ -14,6 +15,7 @@ export function Settings() {
   const [theme, setTheme] = useTheme();
   const [keep, setKeep] = useState(keepRecent);
   const toast = useToast();
+  const [npa, setNpa] = useState(nonPersonalisedOnly);
   return (
     <Page narrow>
       <LargeTitle title="Settings" />
@@ -48,6 +50,21 @@ export function Settings() {
           copy of your documents on any server.
         </p>
       </div>
+
+      {adsOn() && (
+        <>
+          <h2 className="hp-group__title">Ads</h2>
+          <div className="hp-card settings__block">
+            <div className="settings__switch-row">
+              <span>
+                <span className="settings__label">Non-personalised ads only</span>
+                <span className="settings__hint">Ads keep Happy PDF free. They never see your files. With this on, ads are not based on your interests. Applies after a reload.</span>
+              </span>
+              <Switch checked={npa} onChange={(next) => { setNpa(next); setNonPersonalisedOnly(next); }} label="Non-personalised ads only" />
+            </div>
+          </div>
+        </>
+      )}
 
       <h2 className="hp-group__title">About</h2>
       <ul className="hp-group settings__links">

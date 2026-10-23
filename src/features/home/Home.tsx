@@ -5,6 +5,7 @@ import { LargeTitle, Page } from '../../app/shell/AppShell';
 import { Link } from '../../app/router';
 import { CATEGORIES, QUICK_TOOL_IDS, TOOLS, findTool, isReady, searchTools, toolPath, type Category, type Tool } from '../tools/catalog';
 import { SmartDropCard } from '../../files/SmartDrop';
+import { AdSlot } from '../../ads/AdSlot';
 import './home.css';
 
 type Filter = 'All' | Category;
@@ -101,6 +102,7 @@ export function Home() {
           </section>
         ))
       )}
+      <AdSlot placement="home" />
     </Page>
   );
 }

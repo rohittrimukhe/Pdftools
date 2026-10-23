@@ -15,5 +15,9 @@ describe('upload monitor', () => {
     await scope.fetch('https://example.invalid/form', { method: 'POST', body: 'héllo' });
     expect(uploadedSince(start)).toEqual({ bytes: 2048 + 6, requests: 2 });
     expect(calls).toHaveLength(3);
+
+    // The ad network's own requests are counted apart: they never carry your files.
+    await scope.fetch('https://pagead2.googlesyndication.com/pagead/ping', { method: 'POST', body: 'x'.repeat(100) });
+    expect(uploadedSince(start)).toEqual({ bytes: 2048 + 6, requests: 2 });
   });
 });

@@ -4,9 +4,13 @@
  * the "0 bytes uploaded" badge is a measurement, not a claim. Image, script and
  * font downloads send no body, so they don't count as uploads.
  */
+import { isAdRequest } from '../ads/config';
+
 export interface UploadSnapshot { bytes: number; requests: number }
 
 const totals: UploadSnapshot = { bytes: 0, requests: 0 };
+/** Sent to the ad network (only when ads are switched on). Never file data; kept apart so the badge stays about your files. */
+const adTotals: UploadSnapshot = { bytes: 0, requests: 0 };
 let installed = false;
 
 function sizeOf(body: unknown): number {
@@ -25,13 +29,16 @@ function sizeOf(body: unknown): number {
   return 1;
 }
 
-function record(body: unknown) {
+function record(body: unknown, url?: string | URL) {
   const n = sizeOf(body);
-  if (n > 0) {
-    totals.bytes += n;
-    totals.requests += 1;
-  }
+  if (n === 0) return;
+  const target = url !== undefined && isAdRequest(String(url), globalThis.location?.href) ? adTotals : totals;
+  target.bytes += n;
+  target.requests += 1;
 }
+
+const urlOf = (input: RequestInfo | URL) => (typeof input === 'string' || input instanceof URL ? input : input.url);
+const XHR_URL = Symbol('hp.url');
 
 export function installUploadMonitor(scope: typeof globalThis = globalThis) {
   if (installed) return;
@@ -40,17 +47,22 @@ export function installUploadMonitor(scope: typeof globalThis = globalThis) {
   const originalFetch = scope.fetch?.bind(scope);
   if (originalFetch) {
     scope.fetch = (input: RequestInfo | URL, init?: RequestInit) => {
-      if (init?.body != null) record(init.body);
-      else if (typeof Request !== 'undefined' && input instanceof Request && input.body) record(input.body);
+      if (init?.body != null) record(init.body, urlOf(input));
+      else if (typeof Request !== 'undefined' && input instanceof Request && input.body) record(input.body, input.url);
       return originalFetch(input, init);
     };
   }
 
   const xhr = scope.XMLHttpRequest?.prototype;
   if (xhr) {
+    const open = xhr.open;
+    xhr.open = function patchedOpen(this: XMLHttpRequest & { [XHR_URL]?: string }, ...args: unknown[]) {
+      this[XHR_URL] = String(args[1]);
+      return (open as (...a: unknown[]) => void).apply(this, args);
+    } as typeof xhr.open;
     const send = xhr.send;
-    xhr.send = function patchedSend(this: XMLHttpRequest, body?: Document | XMLHttpRequestBodyInit | null) {
-      record(body);
+    xhr.send = function patchedSend(this: XMLHttpRequest & { [XHR_URL]?: string }, body?: Document | XMLHttpRequestBodyInit | null) {
+      record(body, this[XHR_URL]);
       return send.call(this, body);
     };
   }
@@ -58,14 +70,14 @@ export function installUploadMonitor(scope: typeof globalThis = globalThis) {
   const nav = scope.navigator as Navigator | undefined;
   if (nav?.sendBeacon) {
     const beacon = nav.sendBeacon.bind(nav);
-    nav.sendBeacon = (url: string | URL, data?: BodyInit | null) => { record(data); return beacon(url, data); };
+    nav.sendBeacon = (url: string | URL, data?: BodyInit | null) => { record(data, url); return beacon(url, data); };
   }
 
   const ws = scope.WebSocket?.prototype;
   if (ws) {
     const send = ws.send;
     ws.send = function patchedSend(this: WebSocket, ...args: Parameters<WebSocket['send']>) {
-      record(args[0]);
+      record(args[0], this.url);
       return send.apply(this, args);
     };
   }
@@ -78,3 +90,5 @@ export const uploadedSince = (start: UploadSnapshot): UploadSnapshot => ({
   bytes: totals.bytes - start.bytes,
   requests: totals.requests - start.requests,
 });
+
+export const adSnapshot = (): UploadSnapshot => ({ ...adTotals });

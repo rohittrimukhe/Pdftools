@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import { ResultCard } from '../../files/ResultCard';
+import { uploadSnapshot } from '../../privacy/uploadMonitor';
 import { ChevronRight, FileStack, Minimize2, Moon, ShieldCheck, Sun, SunMoon } from 'lucide-react';
 import { Button, Chip, IconButton, Note, Progress, Sheet, Switch } from '../../design/ui';
 import { Logo } from '../../design/Logo';
@@ -22,6 +24,8 @@ export function DesignGallery() {
   const [chip, setChip] = useState('All');
   const [on, setOn] = useState(true);
   const [sheet, setSheet] = useState(false);
+  const sample = useMemo(() => new Blob(['%PDF-1.4\n% Happy PDF sample\n'], { type: 'application/pdf' }), []);
+  const [since] = useState(uploadSnapshot);
 
   return (
     <div className="gal">
@@ -128,6 +132,11 @@ export function DesignGallery() {
             <input id="g-target" className="hp-input" inputMode="numeric" defaultValue="50" />
           </div>
         </div>
+      </section>
+
+      <section aria-labelledby="g-result">
+        <h2 id="g-result">Result card</h2>
+        <ResultCard blob={sample} name="sample-merged.pdf" since={since} summary="Sample only. Not added to Recent." />
       </section>
 
       <Sheet

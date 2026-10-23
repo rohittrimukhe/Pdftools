@@ -1,8 +1,10 @@
-import type { ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import { ChevronRight, FileLock2, Info, Moon, Palette, ScrollText, Sun, SunMoon } from 'lucide-react';
 import { LargeTitle, Page } from '../../app/shell/AppShell';
 import { Link } from '../../app/router';
-import { Chip } from '../../design/ui';
+import { Button, Chip, Switch } from '../../design/ui';
+import { useToast } from '../../design/toast';
+import { RETAIN_DAYS, clearRecent, keepRecent, setKeepRecent } from '../../files/recent';
 import { useTheme, type ThemeChoice } from '../../app/theme';
 import './settings.css';
 
@@ -10,6 +12,8 @@ const THEMES: Array<[ThemeChoice, string, typeof Sun]> = [['system', 'System', S
 
 export function Settings() {
   const [theme, setTheme] = useTheme();
+  const [keep, setKeep] = useState(keepRecent);
+  const toast = useToast();
   return (
     <Page narrow>
       <LargeTitle title="Settings" />
@@ -28,6 +32,16 @@ export function Settings() {
       </div>
 
       <h2 className="hp-group__title">Privacy</h2>
+      <div className="hp-card settings__block">
+        <div className="settings__switch-row">
+          <span>
+            <span className="settings__label">Keep recent files on this device</span>
+            <span className="settings__hint">Files you make stay in Recent for {RETAIN_DAYS} days, then are removed. Never uploaded.</span>
+          </span>
+          <Switch checked={keep} onChange={(next) => { setKeep(next); setKeepRecent(next); }} label="Keep recent files on this device" />
+        </div>
+        <Button variant="outlined" onClick={async () => { await clearRecent(); toast('Recent files cleared'); }}>Clear recent files now</Button>
+      </div>
       <div className="hp-card settings__block">
         <p className="settings__statement">
           Happy PDF works on your device. Your files are never uploaded, and we keep no account, history or

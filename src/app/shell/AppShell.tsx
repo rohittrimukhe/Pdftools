@@ -2,6 +2,7 @@ import { useEffect, useRef, type ReactNode } from 'react';
 import { ArrowLeft, Clock3, House, Settings2 } from 'lucide-react';
 import { Link, goBack, usePath } from '../router';
 import { Logo } from '../../design/Logo';
+import { GlobalDrop } from '../../files/SmartDrop';
 import './shell.css';
 
 const TABS = [
@@ -34,6 +35,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         <TabLinks path={path} variant="rail" />
       </nav>
       <main id="main" ref={main} tabIndex={-1} className="shell__main">{children}</main>
+      <GlobalDrop />
       <nav className="shell__bar" aria-label="Main">
         <TabLinks path={path} variant="bar" />
       </nav>

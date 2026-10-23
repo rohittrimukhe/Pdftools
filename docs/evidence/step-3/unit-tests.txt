@@ -1,0 +1,13 @@
+
+> happy-pdf@0.1.0 test
+> vitest run
+
+
+ RUN  v5.0.5 /home/user/pdftools
+
+
+ Test Files  7 passed (7)
+      Tests  21 passed (21)
+   Start at  05:56:04
+   Duration  539ms (import 62%, transform 20%, tests 13%, worker 6%)
+

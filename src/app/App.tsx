@@ -11,6 +11,7 @@ const About = lazy(() => import('../features/about/About').then((m) => ({ defaul
 const Privacy = lazy(() => import('../features/about/Privacy').then((m) => ({ default: m.Privacy })));
 const Licenses = lazy(() => import('../features/about/Licenses').then((m) => ({ default: m.Licenses })));
 const DesignGallery = lazy(() => import('../features/gallery/DesignGallery').then((m) => ({ default: m.DesignGallery })));
+const OpenFiles = lazy(() => import('../features/open/OpenFiles').then((m) => ({ default: m.OpenFiles })));
 const ToolPage = lazy(() => import('../features/tools/ToolPage').then((m) => ({ default: m.ToolPage })));
 
 function Screen({ path }: { path: string }) {
@@ -21,6 +22,7 @@ function Screen({ path }: { path: string }) {
   if (path === '/privacy') return <Privacy />;
   if (path === '/licenses') return <Licenses />;
   if (path === '/design') return <DesignGallery />;
+  if (path === '/open') return <OpenFiles />;
   const tool = /^\/tools\/([a-z0-9-]+)\/?$/.exec(path);
   if (tool?.[1]) return <ToolPage id={tool[1]} />;
   return <NotFound />;

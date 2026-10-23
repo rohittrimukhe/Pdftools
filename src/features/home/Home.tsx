@@ -4,6 +4,7 @@ import { Chip } from '../../design/ui';
 import { LargeTitle, Page } from '../../app/shell/AppShell';
 import { Link } from '../../app/router';
 import { CATEGORIES, QUICK_TOOL_IDS, TOOLS, findTool, isReady, searchTools, toolPath, type Category, type Tool } from '../tools/catalog';
+import { SmartDropCard } from '../../files/SmartDrop';
 import './home.css';
 
 type Filter = 'All' | Category;
@@ -65,6 +66,8 @@ export function Home() {
           <Chip key={name} selected={filter === name} onClick={() => setFilter(name)}>{name}</Chip>
         ))}
       </div>
+
+      {!searching && filter === 'All' && <SmartDropCard />}
 
       {!searching && filter === 'All' && (
         <section aria-labelledby="home-quick" className="home__quick">

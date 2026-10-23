@@ -146,3 +146,4 @@
 .empty-state__body { max-width: 42ch; color: var(--hp-text-2); margin-bottom: var(--hp-s2); }
 .tool__blurb { margin-bottom: var(--hp-s4); color: var(--hp-text-2); }
 a.hp-btn { text-decoration: none; }
+.hp-badge--alert { background: var(--hp-danger-quiet); color: var(--hp-danger); }

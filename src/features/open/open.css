@@ -1,0 +1,7 @@
+.open__badge { display: flex; flex-wrap: wrap; align-items: center; gap: var(--hp-s2); margin-bottom: var(--hp-s4); font-size: var(--hp-text-sm); color: var(--hp-text-3); }
+.open__files, .open__actions { list-style: none; margin: 0 0 var(--hp-s2); padding: 0; }
+.open__file { display: flex; align-items: center; gap: var(--hp-s4); padding: var(--hp-s3) var(--hp-s4); }
+.open__files > li + li, .open__actions > li + li .hp-row { box-shadow: inset 0 1px 0 var(--hp-divider); }
+.open__name { overflow-wrap: anywhere; }
+.open__actions .hp-row__title { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.open__soon { background: var(--hp-sunken); color: var(--hp-text-2); }

@@ -25,7 +25,7 @@ the engine (`src/pdf/engine.ts`) is separate from the screens and unit-tested on
 | Check | Result |
 |---|---|
 | Unit tests | 35 of 35 passed — page ranges, merge, reorder/rotate, split, watermark on rotated pages, page numbers, protect/unlock round trip, signature placement, lossless re-save, damaged and non-PDF files |
-| Browser tests | 82 of 82 passed on phone and desktop — every tool is run end to end and its **downloaded output is re-read with pdf.js** to check pages, order, rotation, text, encryption and images |
+| Browser tests | 80 of 80 passed on phone and desktop — every tool is run end to end and its **downloaded output is re-read with pdf.js** to check pages, order, rotation, text, encryption and images |
 | Compression | A 9.3 MB photo-heavy 2-page PDF became 197 KB on Balanced (98% smaller); a tiny PDF is handed back unchanged rather than bigger |
 | Accessibility scan (axe) on a loaded tool | No violations |
 

@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test';
 test('the app opens and states its promise', async ({ page }) => {
   await page.goto('/');
   await expect(page.getByRole('heading', { level: 1, name: 'Happy PDF' })).toBeVisible();
-  await expect(page.getByText('Nothing uploaded.')).toBeVisible();
+  await expect(page.getByText('nothing is uploaded', { exact: false })).toBeVisible();
 });
 
 test('opening the app talks to no other website', async ({ page, baseURL }) => {

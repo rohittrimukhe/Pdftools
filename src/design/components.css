@@ -138,3 +138,11 @@
   border-radius: var(--hp-r-md); background: var(--hp-text); color: var(--hp-canvas);
   box-shadow: var(--hp-shadow-2); font-size: var(--hp-text-sm); animation: hp-sheet-in var(--hp-med) var(--hp-ease-out);
 }
+
+/* ---------- Empty states ---------- */
+.empty-state { display: grid; justify-items: center; gap: var(--hp-s2); padding: var(--hp-s10) var(--hp-s5); text-align: center; }
+.empty-state__icon { display: grid; place-items: center; width: 64px; height: 64px; border-radius: 22px; background: var(--hp-primary-container); color: var(--hp-on-primary-container); margin-bottom: var(--hp-s2); }
+.empty-state__title { font-size: var(--hp-text-lg); font-weight: 700; }
+.empty-state__body { max-width: 42ch; color: var(--hp-text-2); margin-bottom: var(--hp-s2); }
+.tool__blurb { margin-bottom: var(--hp-s4); color: var(--hp-text-2); }
+a.hp-btn { text-decoration: none; }

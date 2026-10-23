@@ -6,9 +6,12 @@
   "license": "SEE LICENSE IN LICENSE",
   "type": "module",
   "scripts": {
+    "predev": "node scripts/gen-licenses.mjs",
     "dev": "vite",
+    "prebuild": "node scripts/gen-licenses.mjs",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
+    "pretypecheck": "node scripts/gen-licenses.mjs",
     "typecheck": "tsc -b",
     "test": "vitest run",
     "test:watch": "vitest",

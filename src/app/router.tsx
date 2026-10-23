@@ -14,10 +14,21 @@ export function currentPath(): string {
   return path === '' ? '/' : path;
 }
 
+/** How many in-app screens sit behind this one (0 on the first screen of a visit). */
+export const historyDepth = (): number => Number((window.history.state as { hpDepth?: number } | null)?.hpDepth ?? 0);
+
 export function navigate(path: string, { replace = false } = {}) {
   if (path === currentPath()) return;
-  window.history[replace ? 'replaceState' : 'pushState']({}, '', toHref(path));
+  const depth = historyDepth();
+  if (replace) window.history.replaceState({ hpDepth: depth }, '', toHref(path));
+  else window.history.pushState({ hpDepth: depth + 1 }, '', toHref(path));
   window.dispatchEvent(new Event(EVENT));
+}
+
+/** Back to the previous in-app screen, or to `fallback` when the visit started here (a shared link). */
+export function goBack(fallback: string) {
+  if (historyDepth() > 0) window.history.back();
+  else navigate(fallback, { replace: true });
 }
 
 export function usePath(): string {

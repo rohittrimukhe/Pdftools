@@ -44,7 +44,7 @@ export async function renderPage(page: PDFPageProxy, scale: number, rotation = 0
   return canvas;
 }
 
-const toBlob = (canvas: HTMLCanvasElement, type: string, quality?: number) =>
+export const toBlob = (canvas: HTMLCanvasElement, type: string, quality?: number) =>
   new Promise<Blob>((resolve, reject) => canvas.toBlob((blob) => (blob ? resolve(blob) : reject(new Error('Could not encode image'))), type, quality));
 
 /** Small previews of every page, `width` CSS pixels wide (drawn at device resolution). Caller revokes the URLs. */
@@ -110,4 +110,14 @@ export async function rasterizePdf(bytes: Uint8Array, options: RasterOptions, pa
   } finally {
     await doc.loadingTask.destroy();
   }
+}
+
+/** A PDF whose pages are the given JPEGs, each at its page size in points. */
+export async function jpegsToPdf(pages: Array<{ jpeg: Uint8Array; width: number; height: number }>): Promise<Uint8Array> {
+  const out = await PDFDocument.create();
+  for (const { jpeg, width, height } of pages) {
+    const image = await out.embedJpg(jpeg);
+    out.addPage([width, height]).drawImage(image, { x: 0, y: 0, width, height });
+  }
+  return out.save({ useObjectStreams: true });
 }

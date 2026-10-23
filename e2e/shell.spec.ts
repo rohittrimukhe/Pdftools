@@ -1,7 +1,7 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 
-const ROUTES = ['/', '/open', '/recent', '/settings', '/about', '/privacy', '/licenses', '/tools/merge', '/tools/word-to-pdf', '/nope'];
+const ROUTES = ['/', '/open', '/recent', '/settings', '/about', '/privacy', '/licenses', '/tools/merge', '/tools/exact-size', '/tools/word-to-pdf', '/nope'];
 
 test('the main navigation reaches every tab and marks the current one', async ({ page }) => {
   await page.goto('/');

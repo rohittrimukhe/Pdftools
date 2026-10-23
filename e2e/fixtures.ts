@@ -81,3 +81,16 @@ export async function saveResult(page: Page) {
 export const texts = async (bytes: Uint8Array, password?: string) => (await readPdf(bytes, password)).map((p) => p.text);
 export const unzip = (bytes: Uint8Array) => unzipSync(bytes);
 export { readPdf };
+
+/** Width and height from a JPEG's frame header. */
+export function jpegSize(bytes: Uint8Array): { width: number; height: number } {
+  let i = 2;
+  while (i < bytes.length) {
+    if (bytes[i] !== 0xff) { i++; continue; }
+    const marker = bytes[i + 1]!;
+    const length = (bytes[i + 2]! << 8) | bytes[i + 3]!;
+    if (marker >= 0xc0 && marker <= 0xc3) return { height: (bytes[i + 5]! << 8) | bytes[i + 6]!, width: (bytes[i + 7]! << 8) | bytes[i + 8]! };
+    i += 2 + length;
+  }
+  throw new Error('Not a JPEG');
+}

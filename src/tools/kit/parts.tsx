@@ -1,12 +1,13 @@
 import { useEffect, useState, type ReactNode } from 'react';
-import { Eye, EyeOff, FileType, KeyRound, RotateCcw } from 'lucide-react';
+import { Eye, EyeOff, KeyRound, RotateCcw } from 'lucide-react';
+import { FileIcon, iconKindForType } from '../../files/FileIcon';
 import { Button, IconButton, Note, Progress } from '../../design/ui';
 import { formatBytes } from '../../lib/format';
 
 export function FileHead({ file, detail, onReset }: { file: File; detail?: string; onReset: () => void }) {
   return (
     <div className="hp-group file-head">
-      <span className="hp-row__icon"><FileType aria-hidden size={22} /></span>
+      <span className="hp-row__icon"><FileIcon kind={iconKindForType(file.type, file.name)} /></span>
       <span className="file-head__body">
         <span className="file-head__name">{file.name}</span>
         <span className="file-head__meta">{formatBytes(file.size)}{detail ? ` · ${detail}` : ''}</span>

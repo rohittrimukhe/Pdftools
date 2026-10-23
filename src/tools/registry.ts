@@ -15,4 +15,5 @@ export const TOOL_SCREENS: Record<string, ToolScreen> = {
   'page-numbers': lazy(() => import('./PageNumbers')),
   protect: lazy(() => import('./Protect')),
   unlock: lazy(() => import('./Unlock')),
+  'exact-size': lazy(() => import('./ExactSize')),
 };

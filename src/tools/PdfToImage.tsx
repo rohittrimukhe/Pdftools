@@ -4,7 +4,7 @@ import { ResultCard } from '../files/ResultCard';
 import { encodeImage, FORMAT_EXT, type OutputFormat } from '../images/codec';
 import { parsePageList } from '../pdf/ranges';
 import { PdfError } from '../pdf/errors';
-import { openForView, renderPage } from '../pdf/render';
+
 import { baseName } from '../platform/save';
 import type { Tool } from '../features/tools/catalog';
 import type { UploadSnapshot } from '../privacy/uploadMonitor';
@@ -13,6 +13,7 @@ import { RunPanel } from './kit/parts';
 import { zipBlob } from './kit/output';
 import { useRunner } from './kit/useRunner';
 import type { LoadedPdf } from './kit/usePdf';
+import { loadRender } from '../pdf/lazy';
 
 const DPI = { screen: 96, standard: 150, print: 300 } as const;
 
@@ -59,13 +60,13 @@ function Options({ pdf, since, tool }: { pdf: LoadedPdf; since: UploadSnapshot; 
         <RunPanel label={`Save ${chosen.length} page${chosen.length === 1 ? '' : 's'} as ${format === 'jpeg' ? 'JPG' : 'PNG'}`} busyLabel="Drawing pages" busy={runner.busy} progress={runner.progress} error={runner.error}
           disabled={Boolean(problem) || chosen.length === 0}
           onRun={() => runner.run(async (report) => {
-            const doc = await openForView(pdf.bytes, pdf.password);
+            const doc = await (await loadRender()).openForView(pdf.bytes, pdf.password);
             const stem = baseName(pdf.file.name);
             const files: Array<{ name: string; bytes: Uint8Array; blob: Blob }> = [];
             try {
               for (const [i, index] of chosen.entries()) {
                 const page = await doc.getPage(index + 1);
-                const canvas = await renderPage(page, DPI[dpi] / 72);
+                const canvas = await (await loadRender()).renderPage(page, DPI[dpi] / 72);
                 const blob = await encodeImage(canvas, format as OutputFormat, 0.9);
                 files.push({ name: `${stem}-page-${index + 1}${FORMAT_EXT[format]}`, bytes: new Uint8Array(await blob.arrayBuffer()), blob });
                 canvas.width = canvas.height = 0;

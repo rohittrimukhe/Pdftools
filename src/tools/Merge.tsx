@@ -4,7 +4,7 @@ import { Button, IconButton, Note } from '../design/ui';
 import { pickFiles } from '../files/pick';
 import { ResultCard } from '../files/ResultCard';
 import { formatBytes } from '../lib/format';
-import { mergePdfs, pageCount } from '../pdf/engine';
+
 import { uploadSnapshot } from '../privacy/uploadMonitor';
 import type { Tool } from '../features/tools/catalog';
 import { DropZone } from './kit/DropZone';
@@ -13,6 +13,7 @@ import { ToolLayout } from './kit/ToolLayout';
 import { pdfBlob, outputName } from './kit/output';
 import { messageOf, takePdfHandOff } from './kit/usePdf';
 import { useRunner } from './kit/useRunner';
+import { loadEngine } from '../pdf/lazy';
 
 interface Item { id: number; file: File; pages?: number; problem?: string }
 let nextId = 1;
@@ -27,7 +28,7 @@ export default function Merge({ tool }: { tool: Tool }) {
     setItems((list) => [...list, ...added]);
     runner.clear();
     for (const item of added) {
-      void item.file.arrayBuffer().then((b) => pageCount(new Uint8Array(b))).then(
+      void item.file.arrayBuffer().then(async (b) => (await loadEngine()).pageCount(new Uint8Array(b))).then(
         (pages) => setItems((list) => list.map((i) => (i.id === item.id ? { ...i, pages } : i))),
         (error) => setItems((list) => list.map((i) => (i.id === item.id ? { ...i, problem: messageOf(error) } : i))),
       );
@@ -75,7 +76,7 @@ export default function Merge({ tool }: { tool: Tool }) {
               busy={runner.busy}
               error={runner.error}
               onRun={() => runner.run(async () => {
-                const bytes = await mergePdfs(await Promise.all(ready.map(async (i) => new Uint8Array(await i.file.arrayBuffer()))));
+                const bytes = await (await loadEngine()).mergePdfs(await Promise.all(ready.map(async (i) => new Uint8Array(await i.file.arrayBuffer()))));
                 return { blob: pdfBlob(bytes), name: outputName(ready[0]!.file.name, 'merged'), summary: `${ready.length} files merged into ${totalPages} pages.` };
               })}
             />

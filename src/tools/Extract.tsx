@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { Check } from 'lucide-react';
 import { Button } from '../design/ui';
 import { ResultCard } from '../files/ResultCard';
-import { rebuildPdf } from '../pdf/engine';
+
 import { parsePageList } from '../pdf/ranges';
 import { PdfError } from '../pdf/errors';
 import type { Tool } from '../features/tools/catalog';
@@ -13,6 +13,7 @@ import { outputName, pdfBlob } from './kit/output';
 import { useRunner } from './kit/useRunner';
 import { useThumbnails } from './kit/useThumbnails';
 import type { LoadedPdf } from './kit/usePdf';
+import { loadEngine } from '../pdf/lazy';
 
 export default function Extract({ tool }: { tool: Tool }) {
   return <SinglePdf tool={tool} prompt="Choose a PDF to take pages from">{(pdf, since) => <Picker key={pdf.file.name + pdf.file.size} pdf={pdf} since={since} tool={tool} />}</SinglePdf>;
@@ -81,7 +82,7 @@ function Picker({ pdf, since, tool }: { pdf: LoadedPdf; since: UploadSnapshot; t
         <RunPanel label={picked.length ? `Extract ${picked.length} page${picked.length === 1 ? '' : 's'}` : 'Extract pages'} busyLabel="Extracting" busy={runner.busy} error={runner.error}
           disabled={picked.length === 0 || Boolean(typedError)}
           onRun={() => runner.run(async () => {
-            const bytes = await rebuildPdf(pdf.bytes, picked.map((index) => ({ index })), pdf.password);
+            const bytes = await (await loadEngine()).rebuildPdf(pdf.bytes, picked.map((index) => ({ index })), pdf.password);
             return { blob: pdfBlob(bytes), name: outputName(pdf.file.name, `pages-${describePages(picked).replace(/,\s*/g, '_')}`), summary: `Pages ${describePages(picked)}.` };
           })} />
       )}

@@ -3,20 +3,21 @@ import { Chip, Note, Switch } from '../design/ui';
 import { ResultCard } from '../files/ResultCard';
 import { peekHandOff, takeHandOff } from '../files/handoff';
 import { formatBytes } from '../lib/format';
-import { openPdf } from '../pdf/engine';
+
 import { PdfError } from '../pdf/errors';
 import { baseName } from '../platform/save';
 import { uploadSnapshot } from '../privacy/uploadMonitor';
 import type { Tool } from '../features/tools/catalog';
 import { IMAGE_PRESETS, PDF_TARGETS_KB, type ImagePreset } from '../exact/presets';
 import { fitImage, FitError } from '../exact/image';
-import { fitPdf } from '../exact/pdf';
+
 import { DropZone } from './kit/DropZone';
 import { FileHead, RunPanel, UnlockPrompt } from './kit/parts';
 import { ToolLayout } from './kit/ToolLayout';
 import { pdfBlob } from './kit/output';
 import { useRunner } from './kit/useRunner';
 import './exact.css';
+import { loadEngine, loadExactPdf } from '../pdf/lazy';
 
 type Mode = 'pdf' | 'photo' | 'signature';
 const isPdf = (f: File) => f.type === 'application/pdf' || /\.pdf$/i.test(f.name);
@@ -151,7 +152,7 @@ function PdfFit({ file, onReset, tool, since }: { file: File; onReset: () => voi
   useEffect(() => {
     void file.arrayBuffer().then(async (b) => {
       const data = new Uint8Array(b);
-      try { await openPdf(data); setBytes(data); } catch (e) {
+      try { await (await loadEngine()).openPdf(data); setBytes(data); } catch (e) {
         if (e instanceof PdfError && e.code === 'password-required') { setLocked({}); setBytes(data); } else runner.run(async () => { throw e; });
       }
     });
@@ -159,7 +160,7 @@ function PdfFit({ file, onReset, tool, since }: { file: File; onReset: () => voi
 
   if (locked && bytes) {
     return <><FileHead file={file} onReset={onReset} /><UnlockPrompt error={locked.error} onUnlock={async (pw) => {
-      try { await openPdf(bytes, pw); setPassword(pw); setLocked(null); } catch (e) { setLocked({ error: e instanceof PdfError ? e.message : undefined }); }
+      try { await (await loadEngine()).openPdf(bytes, pw); setPassword(pw); setLocked(null); } catch (e) { setLocked({ error: e instanceof PdfError ? e.message : undefined }); }
     }} /></>;
   }
 
@@ -184,7 +185,7 @@ function PdfFit({ file, onReset, tool, since }: { file: File; onReset: () => voi
         <RunPanel label={`Make it under ${kbLabel(limit)}`} busyLabel={note || 'Working'} busy={runner.busy} progress={runner.progress} error={runner.error}
           disabled={!bytes || !(limit > 0)}
           onRun={() => runner.run(async (report) => {
-            const fitted = await fitPdf(bytes!, limit, password, (f, n) => { report(f); setNote(n); });
+            const fitted = await (await loadExactPdf()).fitPdf(bytes!, limit, password, (f, n) => { report(f); setNote(n); });
             if (!fitted) throw new PdfError('bad-range', `This PDF can’t get under ${kbLabel(limit)} while staying readable. Try a larger limit, or split it into smaller parts.`);
             const how = fitted.lossless ? 'pages unchanged' : `pages as images at ${fitted.dpi} dpi`;
             return { blob: pdfBlob(fitted.bytes), name: `${baseName(file.name)}-under-${limit}kb.pdf`, summary: `${formatBytes(file.size)} → ${formatBytes(fitted.bytes.length)} (${how}).` };

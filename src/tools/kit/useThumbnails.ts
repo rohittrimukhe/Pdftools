@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { openForView, thumbnails } from '../../pdf/render';
+import { loadRender } from '../../pdf/lazy';
+
 
 /** Page previews for a loaded PDF, filled in one by one as they render. */
 export function useThumbnails(bytes: Uint8Array | undefined, password?: string, width = 112) {
@@ -10,8 +11,8 @@ export function useThumbnails(bytes: Uint8Array | undefined, password?: string, 
     const made: string[] = [];
     void (async () => {
       try {
-        const doc = await openForView(bytes, password);
-        await thumbnails(doc, width, (index, url) => {
+        const doc = await (await loadRender()).openForView(bytes, password);
+        await (await loadRender()).thumbnails(doc, width, (index, url) => {
           made.push(url);
           if (alive) setUrls((list) => { const next = [...list]; next[index] = url; return next; });
           else URL.revokeObjectURL(url);

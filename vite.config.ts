@@ -2,6 +2,10 @@ import { defineConfig } from 'vitest/config';
 import type { Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
 import pkg from './package.json' with { type: 'json' };
+import { sitePlugin } from './build/site';
+
+const base = process.env.HAPPY_BASE ?? '/';
+const siteUrl = process.env.HAPPY_SITE_URL ?? `https://rohittrimukhe.github.io${base.replace(/\/$/, '')}`;
 
 // `base` is set by the deploy workflow for GitHub Pages project sites
 // (served under /<repo>/); everywhere else the app lives at the root.
@@ -18,8 +22,8 @@ function adsTxt(): Plugin {
 }
 
 export default defineConfig({
-  base: process.env.HAPPY_BASE ?? '/',
-  plugins: [react(), adsTxt()],
+  base,
+  plugins: [react(), adsTxt(), sitePlugin({ base, siteUrl })],
   define: { __APP_VERSION__: JSON.stringify(pkg.version) },
   // The PDF engine (pdf-lib, pdf.js) is one large chunk loaded only when a tool opens; Home stays small.
   build: { target: 'es2022', sourcemap: true, chunkSizeWarningLimit: 700 },

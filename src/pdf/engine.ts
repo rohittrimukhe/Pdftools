@@ -126,8 +126,8 @@ export async function addWatermark(bytes: Bytes, options: WatermarkOptions, pass
   return save(doc);
 }
 
-export type NumberPosition = 'bottom-center' | 'bottom-right' | 'bottom-left' | 'top-center' | 'top-right' | 'top-left';
-export type NumberStyle = 'n' | 'page-n' | 'n-of-total';
+import { pageLabel, type NumberPosition, type NumberStyle } from './labels';
+export { pageLabel, type NumberPosition, type NumberStyle };
 
 export interface PageNumberOptions {
   position?: NumberPosition;
@@ -137,12 +137,6 @@ export interface PageNumberOptions {
   /** Leave the first N pages unnumbered (a cover). */
   skipFirst?: number;
   fontSize?: number;
-}
-
-export function pageLabel(style: NumberStyle, n: number, total: number): string {
-  if (style === 'page-n') return `Page ${n}`;
-  if (style === 'n-of-total') return `${n} of ${total}`;
-  return String(n);
 }
 
 export async function addPageNumbers(bytes: Bytes, options: PageNumberOptions = {}, password?: string): Promise<Uint8Array> {

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Chip } from '../design/ui';
 import { ResultCard } from '../files/ResultCard';
-import { addWatermark } from '../pdf/engine';
+
 import type { Tool } from '../features/tools/catalog';
 import type { UploadSnapshot } from '../privacy/uploadMonitor';
 import { SinglePdf } from './kit/SinglePdf';
@@ -9,6 +9,7 @@ import { RangeField, RunPanel } from './kit/parts';
 import { outputName, pdfBlob } from './kit/output';
 import { useRunner } from './kit/useRunner';
 import type { LoadedPdf } from './kit/usePdf';
+import { loadEngine } from '../pdf/lazy';
 
 const SIZES = { small: 0.08, medium: 0.12, large: 0.18 } as const;
 const COLORS = { grey: [0.5, 0.5, 0.5], red: [0.75, 0.1, 0.1], blue: [0.1, 0.25, 0.7] } as const;
@@ -59,7 +60,7 @@ function Options({ pdf, since, tool }: { pdf: LoadedPdf; since: UploadSnapshot; 
       {!runner.output && (
         <RunPanel label="Add watermark" busyLabel="Adding watermark" busy={runner.busy} error={runner.error} disabled={!text.trim()}
           onRun={() => runner.run(async () => {
-            const bytes = await addWatermark(pdf.bytes, { text, scale: SIZES[size], color: [...COLORS[color]] as [number, number, number], layout: diagonal ? 'diagonal' : 'flat', opacity: opacity / 100 }, pdf.password);
+            const bytes = await (await loadEngine()).addWatermark(pdf.bytes, { text, scale: SIZES[size], color: [...COLORS[color]] as [number, number, number], layout: diagonal ? 'diagonal' : 'flat', opacity: opacity / 100 }, pdf.password);
             return { blob: pdfBlob(bytes), name: outputName(pdf.file.name, 'watermarked'), summary: `“${text.trim()}” on all ${pdf.pages} pages.` };
           })} />
       )}

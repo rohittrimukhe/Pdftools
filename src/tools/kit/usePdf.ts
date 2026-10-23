@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { openPdf } from '../../pdf/engine';
+
 import { PdfError } from '../../pdf/errors';
 import { peekHandOff, takeHandOff } from '../../files/handoff';
 import { uploadSnapshot, type UploadSnapshot } from '../../privacy/uploadMonitor';
+import { loadEngine } from '../../pdf/lazy';
 
 export interface LoadedPdf {
   file: File;
@@ -40,7 +41,7 @@ export function usePdf() {
     setState({ status: 'loading', file });
     const bytes = known ?? new Uint8Array(await file.arrayBuffer());
     try {
-      const doc = await openPdf(bytes, password);
+      const doc = await (await loadEngine()).openPdf(bytes, password);
       if (ticket !== current.current) return;
       setState({ status: 'ready', pdf: { file, bytes, pages: doc.getPageCount(), password } });
     } catch (error) {

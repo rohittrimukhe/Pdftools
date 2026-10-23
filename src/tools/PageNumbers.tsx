@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Chip } from '../design/ui';
 import { ResultCard } from '../files/ResultCard';
-import { addPageNumbers, pageLabel, type NumberPosition, type NumberStyle } from '../pdf/engine';
+import { pageLabel, type NumberPosition, type NumberStyle } from '../pdf/labels';
 import type { Tool } from '../features/tools/catalog';
 import type { UploadSnapshot } from '../privacy/uploadMonitor';
 import { SinglePdf } from './kit/SinglePdf';
@@ -9,6 +9,7 @@ import { RunPanel } from './kit/parts';
 import { outputName, pdfBlob } from './kit/output';
 import { useRunner } from './kit/useRunner';
 import type { LoadedPdf } from './kit/usePdf';
+import { loadEngine } from '../pdf/lazy';
 
 const POSITIONS: Array<[NumberPosition, string]> = [['bottom-center', 'Bottom centre'], ['bottom-right', 'Bottom right'], ['bottom-left', 'Bottom left'], ['top-center', 'Top centre'], ['top-right', 'Top right'], ['top-left', 'Top left']];
 const STYLES: NumberStyle[] = ['n', 'page-n', 'n-of-total'];
@@ -57,7 +58,7 @@ function Options({ pdf, since, tool }: { pdf: LoadedPdf; since: UploadSnapshot; 
       {!runner.output && (
         <RunPanel label="Add page numbers" busyLabel="Numbering" busy={runner.busy} error={runner.error} disabled={skipCover && pdf.pages < 2}
           onRun={() => runner.run(async () => {
-            const bytes = await addPageNumbers(pdf.bytes, { position, style, startAt, skipFirst: skipCover ? 1 : 0 }, pdf.password);
+            const bytes = await (await loadEngine()).addPageNumbers(pdf.bytes, { position, style, startAt, skipFirst: skipCover ? 1 : 0 }, pdf.password);
             return { blob: pdfBlob(bytes), name: outputName(pdf.file.name, 'numbered'), summary: `Numbered ${pageLabel(style, startAt, total)} onwards.` };
           })} />
       )}

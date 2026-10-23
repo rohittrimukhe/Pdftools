@@ -1,4 +1,5 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
+import { metaFor } from './meta';
 import { ToastProvider } from '../design/toast';
 import { AppShell } from './shell/AppShell';
 import { usePath } from './router';
@@ -30,6 +31,11 @@ function Screen({ path }: { path: string }) {
 
 export function App() {
   const path = usePath();
+  useEffect(() => {
+    const meta = metaFor(path.replace(/\/$/, '') || '/');
+    document.title = meta.title;
+    document.querySelector('meta[name="description"]')?.setAttribute('content', meta.description);
+  }, [path]);
   return (
     <ToastProvider>
       <AppShell>

@@ -8,7 +8,7 @@ describes.
 |---|---|
 | [Run the app locally](run-locally.md) | Ready |
 | [Make a pull request and pass the quality gate](pull-request.md) | Ready |
-| Deploy the website to GitHub Pages | Planned (step 8) |
+| [Deploy the website to GitHub Pages](deploy-github-pages.md) | Ready |
 | [Turn ads on or off](ads.md) | Ready |
 | Build the Windows, Linux and macOS apps | Planned (step 9) |
 | Build and publish the Android app | Planned (step 9) |

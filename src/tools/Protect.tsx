@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Note } from '../design/ui';
 import { ResultCard } from '../files/ResultCard';
-import { protectPdf } from '../pdf/engine';
+
 import type { Tool } from '../features/tools/catalog';
 import type { UploadSnapshot } from '../privacy/uploadMonitor';
 import { SinglePdf } from './kit/SinglePdf';
@@ -9,6 +9,7 @@ import { PasswordField, RunPanel } from './kit/parts';
 import { outputName, pdfBlob } from './kit/output';
 import { useRunner } from './kit/useRunner';
 import type { LoadedPdf } from './kit/usePdf';
+import { loadEngine } from '../pdf/lazy';
 
 export default function Protect({ tool }: { tool: Tool }) {
   return <SinglePdf tool={tool} prompt="Choose a PDF to protect">{(pdf, since) => <Options key={pdf.file.name + pdf.file.size} pdf={pdf} since={since} tool={tool} />}</SinglePdf>;
@@ -41,7 +42,7 @@ function Options({ pdf, since, tool }: { pdf: LoadedPdf; since: UploadSnapshot; 
       {!runner.output && (
         <RunPanel label="Protect PDF" busyLabel="Protecting" busy={runner.busy} error={runner.error} disabled={password.length === 0 || password !== again}
           onRun={() => runner.run(async () => {
-            const bytes = await protectPdf(pdf.bytes, password, pdf.password);
+            const bytes = await (await loadEngine()).protectPdf(pdf.bytes, password, pdf.password);
             return { blob: pdfBlob(bytes), name: outputName(pdf.file.name, 'protected'), summary: 'Locked with AES-256. The password is needed to open it.' };
           })} />
       )}

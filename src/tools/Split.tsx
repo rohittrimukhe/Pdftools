@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Chip } from '../design/ui';
 import { ResultCard } from '../files/ResultCard';
-import { splitPdf } from '../pdf/engine';
+
 import { chunkPages, parsePageGroups } from '../pdf/ranges';
 import { PdfError } from '../pdf/errors';
 import type { Tool } from '../features/tools/catalog';
@@ -12,6 +12,7 @@ import { outputName, pdfBlob, zipBlob } from './kit/output';
 import { usePdf } from './kit/usePdf';
 import { useRunner } from './kit/useRunner';
 import { baseName } from '../platform/save';
+import { loadEngine } from '../pdf/lazy';
 
 type Mode = 'each' | 'every' | 'ranges';
 
@@ -71,7 +72,7 @@ export default function Split({ tool }: { tool: Tool }) {
         <RunPanel label={groups.length > 1 ? `Split into ${groups.length} files` : 'Split'} busyLabel="Splitting" busy={runner.busy} progress={runner.progress} error={runner.error}
           disabled={Boolean(problem) || groups.length === 0}
           onRun={() => runner.run(async () => {
-            const parts = await splitPdf(pdf.bytes, groups, pdf.password);
+            const parts = await (await loadEngine()).splitPdf(pdf.bytes, groups, pdf.password);
             const stem = baseName(pdf.file.name);
             if (parts.length === 1) return { blob: pdfBlob(parts[0]!), name: outputName(pdf.file.name, `pages-${describe(groups[0]!)}`) };
             const blob = zipBlob(parts.map((bytes, i) => ({ name: `${stem}-pages-${describe(groups[i]!)}.pdf`, bytes })));

@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { Chip, Note, Switch } from '../design/ui';
 import { ResultCard } from '../files/ResultCard';
 import { formatBytes } from '../lib/format';
-import { compressLossless } from '../pdf/engine';
-import { rasterizePdf } from '../pdf/render';
+
+
 import type { Tool } from '../features/tools/catalog';
 import { SinglePdf } from './kit/SinglePdf';
 import { RunPanel } from './kit/parts';
@@ -11,6 +11,7 @@ import { outputName, pdfBlob } from './kit/output';
 import { useRunner } from './kit/useRunner';
 import type { LoadedPdf } from './kit/usePdf';
 import type { UploadSnapshot } from '../privacy/uploadMonitor';
+import { loadEngine, loadRender } from '../pdf/lazy';
 
 export const LEVELS = {
   light: { label: 'Light', dpi: 150, quality: 0.8, hint: 'Sharp text and photos, smaller file' },
@@ -57,8 +58,8 @@ function CompressOptions({ pdf, since, tool }: { pdf: LoadedPdf; since: UploadSn
         <RunPanel label="Compress" busyLabel="Compressing" busy={runner.busy} progress={runner.progress} error={runner.error}
           onRun={() => runner.run(async (report) => {
             const bytes = level === 'lossless'
-              ? await compressLossless(pdf.bytes, pdf.password)
-              : await rasterizePdf(pdf.bytes, { ...LEVELS[level], grayscale: gray, onProgress: (d, t) => report(d / t) }, pdf.password);
+              ? await (await loadEngine()).compressLossless(pdf.bytes, pdf.password)
+              : await (await loadRender()).rasterizePdf(pdf.bytes, { ...LEVELS[level], grayscale: gray, onProgress: (d, t) => report(d / t) }, pdf.password);
             if (bytes.length >= before) {
               return { blob: pdfBlob(pdf.bytes), name: pdf.file.name, summary: `This PDF is already as small as this setting can make it (${formatBytes(before)}). Try a stronger setting.` };
             }

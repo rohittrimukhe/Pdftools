@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { PDFDocument } from '@cantoo/pdf-lib';
+
 import { Chip } from '../design/ui';
 import { ResultCard } from '../files/ResultCard';
 import { decodeImage, drawImage, encodeImage } from '../images/codec';
@@ -12,6 +12,7 @@ import { RunPanel } from './kit/parts';
 import { ToolLayout } from './kit/ToolLayout';
 import { pdfBlob } from './kit/output';
 import { useRunner } from './kit/useRunner';
+import { loadPdfLib } from '../pdf/lazy';
 
 type PageSize = 'fit' | 'a4' | 'letter';
 const SIZES: Record<Exclude<PageSize, 'fit'>, [number, number]> = { a4: [595.28, 841.89], letter: [612, 792] };
@@ -52,7 +53,7 @@ export default function ImageToPdf({ tool }: { tool: Tool }) {
       {n > 0 && !runner.output && (
         <RunPanel label={`Make a PDF of ${n} image${n === 1 ? '' : 's'}`} busyLabel="Making your PDF" busy={runner.busy} progress={runner.progress} error={runner.error}
           onRun={() => runner.run(async (report) => {
-            const out = await PDFDocument.create();
+            const out = await (await loadPdfLib()).PDFDocument.create();
             for (const [i, { file }] of list.items.entries()) {
               let image;
               try { image = await decodeImage(file); } catch (e) { throw new PdfError('not-pdf', `${file.name}: ${(e as Error).message}`); }

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { ArrowLeft, ArrowRight, RotateCcw, RotateCw, Trash2, Undo2 } from 'lucide-react';
 import { Button, IconButton } from '../design/ui';
 import { ResultCard } from '../files/ResultCard';
-import { rebuildPdf } from '../pdf/engine';
+
 import type { Tool } from '../features/tools/catalog';
 import type { UploadSnapshot } from '../privacy/uploadMonitor';
 import { SinglePdf } from './kit/SinglePdf';
@@ -11,6 +11,7 @@ import { outputName, pdfBlob } from './kit/output';
 import { useRunner } from './kit/useRunner';
 import { useThumbnails } from './kit/useThumbnails';
 import type { LoadedPdf } from './kit/usePdf';
+import { loadEngine } from '../pdf/lazy';
 
 interface Slot { index: number; rotate: number; removed: boolean }
 
@@ -77,7 +78,7 @@ function Board({ pdf, since, tool }: { pdf: LoadedPdf; since: UploadSnapshot; to
         <RunPanel label={`Save ${kept.length} page${kept.length === 1 ? '' : 's'}`} busyLabel="Saving" busy={runner.busy} error={runner.error}
           disabled={!changed || kept.length === 0}
           onRun={() => runner.run(async () => {
-            const bytes = await rebuildPdf(pdf.bytes, kept.map((s) => ({ index: s.index, rotate: s.rotate })), pdf.password);
+            const bytes = await (await loadEngine()).rebuildPdf(pdf.bytes, kept.map((s) => ({ index: s.index, rotate: s.rotate })), pdf.password);
             const removed = slots.length - kept.length;
             return { blob: pdfBlob(bytes), name: outputName(pdf.file.name, 'organised'), summary: `${kept.length} pages${removed ? `, ${removed} removed` : ''}.` };
           })}>

@@ -3,8 +3,8 @@ import { ImageUp } from 'lucide-react';
 import { Button, Chip, Note } from '../design/ui';
 import { ResultCard } from '../files/ResultCard';
 import { pickFiles } from '../files/pick';
-import { placeImages } from '../pdf/engine';
-import { openForView, renderPage } from '../pdf/render';
+
+
 import type { Tool } from '../features/tools/catalog';
 import type { UploadSnapshot } from '../privacy/uploadMonitor';
 import { SinglePdf } from './kit/SinglePdf';
@@ -14,6 +14,7 @@ import { useRunner } from './kit/useRunner';
 import type { LoadedPdf } from './kit/usePdf';
 import { DrawPad, typedSignature, type Signature } from './SignaturePad';
 import './sign.css';
+import { loadEngine, loadRender } from '../pdf/lazy';
 
 type Mode = 'draw' | 'type' | 'upload';
 
@@ -38,9 +39,9 @@ function Signer({ pdf, since, tool }: { pdf: LoadedPdf; since: UploadSnapshot; t
     let url = '';
     let alive = true;
     void (async () => {
-      const doc = await openForView(pdf.bytes, pdf.password);
+      const doc = await (await loadRender()).openForView(pdf.bytes, pdf.password);
       const p = await doc.getPage(page + 1);
-      const canvas = await renderPage(p, 1.5);
+      const canvas = await (await loadRender()).renderPage(p, 1.5);
       const blob = await new Promise<Blob | null>((r) => canvas.toBlob(r, 'image/jpeg', 0.85));
       await doc.loadingTask.destroy();
       if (!blob || !alive) return;
@@ -147,7 +148,7 @@ function Signer({ pdf, since, tool }: { pdf: LoadedPdf; since: UploadSnapshot; t
           onRun={() => runner.run(async () => {
             const boxFor = { x: Math.max(0, spot.x - width / 2), y: Math.max(0, spot.y - height / 2), width, height };
             const pages = everyPage ? Array.from({ length: pdf.pages }, (_, i) => i) : [page];
-            const bytes = await placeImages(pdf.bytes, pages.map((p) => ({ page: p, image: sig!.png, box: boxFor })), pdf.password);
+            const bytes = await (await loadEngine()).placeImages(pdf.bytes, pages.map((p) => ({ page: p, image: sig!.png, box: boxFor })), pdf.password);
             return { blob: pdfBlob(bytes), name: outputName(pdf.file.name, 'signed'), summary: everyPage ? `Signed on all ${pdf.pages} pages.` : `Signed on page ${page + 1}.` };
           })}>
           <Note>This adds a picture of your signature. It is not a certified digital signature.</Note>

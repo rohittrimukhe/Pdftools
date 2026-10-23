@@ -94,3 +94,14 @@ export function jpegSize(bytes: Uint8Array): { width: number; height: number } {
   }
   throw new Error('Not a JPEG');
 }
+
+export const pngSize = (b: Uint8Array) => ({ width: new DataView(b.buffer, b.byteOffset).getUint32(16), height: new DataView(b.buffer, b.byteOffset).getUint32(20) });
+export const png = (name: string, w: number, h: number) => ({ name, mimeType: 'image/png', buffer: Buffer.from(makePng(w, h)) });
+
+/** Opens a tool that takes images and adds them through its picker. */
+export async function openImageTool(page: Page, id: string, files: Array<{ name: string; mimeType: string; buffer: Buffer }>) {
+  await page.goto(`/tools/${id}`);
+  const chooser = page.waitForEvent('filechooser');
+  await page.getByRole('button', { name: 'Choose files' }).click();
+  await (await chooser).setFiles(files);
+}

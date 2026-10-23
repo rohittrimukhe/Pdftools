@@ -34,8 +34,8 @@ export async function openForView(bytes: Uint8Array, password?: string): Promise
 export async function renderPage(page: PDFPageProxy, scale: number, rotation = 0): Promise<HTMLCanvasElement> {
   const viewport = page.getViewport({ scale, rotation: (page.rotate + rotation) % 360 });
   const canvas = document.createElement('canvas');
-  canvas.width = Math.max(1, Math.floor(viewport.width));
-  canvas.height = Math.max(1, Math.floor(viewport.height));
+  canvas.width = Math.max(1, Math.round(viewport.width));
+  canvas.height = Math.max(1, Math.round(viewport.height));
   const context = canvas.getContext('2d', { alpha: false });
   if (!context) throw new Error('Canvas is not available');
   context.fillStyle = '#ffffff';

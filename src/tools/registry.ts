@@ -16,4 +16,8 @@ export const TOOL_SCREENS: Record<string, ToolScreen> = {
   protect: lazy(() => import('./Protect')),
   unlock: lazy(() => import('./Unlock')),
   'exact-size': lazy(() => import('./ExactSize')),
+  'image-to-pdf': lazy(() => import('./ImageToPdf')),
+  'pdf-to-image': lazy(() => import('./PdfToImage')),
+  'convert-image': lazy(() => import('./ImageBatch').then((m) => ({ default: m.ConvertImage }))),
+  'resize-image': lazy(() => import('./ImageBatch').then((m) => ({ default: m.ResizeImage }))),
 };

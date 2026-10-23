@@ -1,0 +1,145 @@
+/*
+ * Happy PDF design tokens.
+ * Seed: sunny amber. Material 3 roles, One UI proportions (grey canvas, white
+ * grouped cards, generous radii, large titles). Every text role clears WCAG AA
+ * 4.5:1 on canvas, card and sunken surfaces; outlines that bound a control
+ * clear 3:1. Ratios were measured when the values were chosen and are noted
+ * as canvas / card / sunken.
+ */
+:root {
+  color-scheme: light;
+
+  /* Grounds */
+  --hp-canvas: #f8f6f1;
+  --hp-card: #ffffff;
+  --hp-sunken: #f1ede4;
+  --hp-raised: #ffffff;
+  --hp-scrim: rgb(29 26 20 / 0.45);
+
+  /* Text */
+  --hp-text: #1d1a14;        /* 16.07 / 17.35 / 14.85 */
+  --hp-text-2: #4e473c;      /* 8.49 / 9.17 / 7.85 */
+  --hp-text-3: #655d50;      /* 6.01 / 6.49 / 5.56 */
+
+  /* Edges */
+  --hp-outline: #8a8172;     /* 3.56 / 3.84 / 3.29: bounds controls */
+  --hp-divider: #e4ded2;     /* separates rows, never bounds a control */
+
+  /* Brand */
+  --hp-primary: #9c5700;            /* honey: fills, focus, links. 5.15 / 5.56 / 4.76 */
+  --hp-on-primary: #ffffff;         /* 5.56 on primary */
+  --hp-primary-container: #ffd978;  /* sunny: selected states, highlights */
+  --hp-on-primary-container: #3d2600; /* 10.47 on container */
+  --hp-sun: #ffb627;                /* decoration only, never text */
+
+  /* Status (text colours; quiet grounds behind them) */
+  --hp-success: #2f6b3a;
+  --hp-success-quiet: #e3f1e3;
+  --hp-warn: #7a5000;
+  --hp-warn-quiet: #fbefd2;
+  --hp-danger: #b3261e;
+  --hp-danger-quiet: #fbe4e1;
+
+  /* Type */
+  --hp-font: 'Figtree Variable', 'Segoe UI', Roboto, 'Noto Sans', 'Noto Sans Devanagari', 'Helvetica Neue', Arial, sans-serif;
+  --hp-text-xs: 0.75rem;
+  --hp-text-sm: 0.875rem;
+  --hp-text-md: 1rem;
+  --hp-text-lg: 1.125rem;
+  --hp-text-xl: 1.375rem;
+  --hp-text-2xl: 1.75rem;
+  --hp-text-display: 2.25rem;
+
+  /* Space (4px grid) */
+  --hp-s1: 0.25rem;
+  --hp-s2: 0.5rem;
+  --hp-s3: 0.75rem;
+  --hp-s4: 1rem;
+  --hp-s5: 1.25rem;
+  --hp-s6: 1.5rem;
+  --hp-s8: 2rem;
+  --hp-s10: 2.5rem;
+  --hp-s12: 3rem;
+
+  /* Shape */
+  --hp-r-sm: 0.75rem;
+  --hp-r-md: 1rem;
+  --hp-r-lg: 1.5rem;
+  --hp-r-xl: 1.75rem;
+  --hp-r-full: 999px;
+
+  /* Size */
+  --hp-touch: 48px;
+  --hp-nav-h: 72px;
+  --hp-rail-w: 88px;
+
+  /* Elevation */
+  --hp-shadow-1: 0 1px 2px rgb(29 26 20 / 0.06), 0 1px 3px rgb(29 26 20 / 0.06);
+  --hp-shadow-2: 0 4px 12px rgb(29 26 20 / 0.08), 0 2px 4px rgb(29 26 20 / 0.05);
+  --hp-shadow-3: 0 16px 40px rgb(29 26 20 / 0.16);
+
+  /* Motion */
+  --hp-fast: 120ms;
+  --hp-med: 220ms;
+  --hp-slow: 360ms;
+  --hp-ease: cubic-bezier(0.2, 0, 0, 1);
+  --hp-ease-out: cubic-bezier(0.05, 0.7, 0.1, 1);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --hp-canvas: #12110e;
+    --hp-card: #1d1b17;
+    --hp-sunken: #26231e;
+    --hp-raised: #26231e;
+    --hp-scrim: rgb(0 0 0 / 0.6);
+    --hp-text: #f3eee5;
+    --hp-text-2: #d2cabd;
+    --hp-text-3: #aba293;
+    --hp-outline: #8e8578;
+    --hp-divider: #2f2b25;
+    --hp-primary: #ffc24d;
+    --hp-on-primary: #2e1d00;
+    --hp-primary-container: #5a3b00;
+    --hp-on-primary-container: #ffe3a6;
+    --hp-sun: #ffb627;
+    --hp-success: #8fd19b;
+    --hp-success-quiet: #1f3523;
+    --hp-warn: #f2c46a;
+    --hp-warn-quiet: #3a2d10;
+    --hp-danger: #f2b8b5;
+    --hp-danger-quiet: #44201d;
+    --hp-shadow-1: 0 1px 2px rgb(0 0 0 / 0.5);
+    --hp-shadow-2: 0 4px 12px rgb(0 0 0 / 0.5);
+    --hp-shadow-3: 0 16px 40px rgb(0 0 0 / 0.6);
+  }
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --hp-canvas: #12110e;
+  --hp-card: #1d1b17;
+  --hp-sunken: #26231e;
+  --hp-raised: #26231e;
+  --hp-scrim: rgb(0 0 0 / 0.6);
+  --hp-text: #f3eee5;
+  --hp-text-2: #d2cabd;
+  --hp-text-3: #aba293;
+  --hp-outline: #8e8578;
+  --hp-divider: #2f2b25;
+  --hp-primary: #ffc24d;
+  --hp-on-primary: #2e1d00;
+  --hp-primary-container: #5a3b00;
+  --hp-on-primary-container: #ffe3a6;
+  --hp-sun: #ffb627;
+  --hp-success: #8fd19b;
+  --hp-success-quiet: #1f3523;
+  --hp-warn: #f2c46a;
+  --hp-warn-quiet: #3a2d10;
+  --hp-danger: #f2b8b5;
+  --hp-danger-quiet: #44201d;
+  --hp-shadow-1: 0 1px 2px rgb(0 0 0 / 0.5);
+  --hp-shadow-2: 0 4px 12px rgb(0 0 0 / 0.5);
+  --hp-shadow-3: 0 16px 40px rgb(0 0 0 / 0.6);
+}

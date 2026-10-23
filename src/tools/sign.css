@@ -1,0 +1,9 @@
+.sign-pad { position: relative; display: grid; gap: var(--hp-s2); }
+.sign-pad__canvas { width: 100%; height: 180px; border-radius: var(--hp-r-md); background: #ffffff; border: 1px solid var(--hp-outline); touch-action: none; cursor: crosshair; }
+.sign-pad__hint { position: absolute; left: 0; right: 0; top: 70px; text-align: center; color: #8a8172; font-size: var(--hp-text-lg); pointer-events: none; }
+.sign-pad > .hp-btn { justify-self: end; }
+.sign-typed { max-height: 80px; max-width: 100%; margin-top: var(--hp-s2); padding: var(--hp-s2); border-radius: var(--hp-r-sm); background: #ffffff; }
+.sign-page { all: unset; position: relative; display: block; width: 100%; max-width: 520px; margin: 0 auto; cursor: crosshair; box-shadow: var(--hp-shadow-2); background: #fff; }
+.sign-page:focus-visible { outline: 3px solid var(--hp-primary); outline-offset: 4px; }
+.sign-page > img:first-child { display: block; width: 100%; height: 100%; }
+.sign-page__sig { position: absolute; height: auto; outline: 2px dashed var(--hp-primary); outline-offset: 2px; pointer-events: none; }

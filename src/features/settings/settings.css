@@ -1,0 +1,10 @@
+.settings__block { display: grid; gap: var(--hp-s3); }
+.settings__label { font-weight: 650; }
+.settings__chips { display: flex; flex-wrap: wrap; gap: var(--hp-s2); }
+.settings__hint { font-size: var(--hp-text-sm); color: var(--hp-text-3); }
+.settings__statement { color: var(--hp-text-2); }
+.settings__links { list-style: none; margin: 0; padding: 0; }
+.settings__links > li + li .hp-row { box-shadow: inset 0 1px 0 var(--hp-divider); }
+.settings__switch-row { display: flex; align-items: center; justify-content: space-between; gap: var(--hp-s4); }
+.settings__switch-row .settings__label, .settings__switch-row .settings__hint { display: block; }
+.settings__block + .settings__block { margin-top: var(--hp-s3); }

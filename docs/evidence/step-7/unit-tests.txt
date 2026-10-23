@@ -1,0 +1,16 @@
+
+> happy-pdf@0.1.0 test
+> vitest run
+
+
+ RUN  v5.0.5 /home/user/pdftools
+
+
+ Test Files  11 passed (11)
+      Tests  53 passed (53)
+   Start at  06:45:52
+   Duration  1.16s (import 33%, tests 33%, transform 32%, worker 2%)
+
+    Isolate  11 workers spawned · ~106ms startup each (spawn + environment, per file)
+             at least ~283ms faster with isolate: false — reuses workers across files instead of one per file
+

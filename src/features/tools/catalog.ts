@@ -51,7 +51,7 @@ export const TOOLS: readonly Tool[] = [
 export const QUICK_TOOL_IDS = ['merge', 'compress', 'exact-size', 'image-to-pdf'] as const;
 
 /** Highest build step that has shipped. Raised as each step lands. */
-export const SHIPPED_STEP = 2;
+export const SHIPPED_STEP = 4;
 
 export const isReady = (tool: Tool) => tool.step <= SHIPPED_STEP;
 export const toolPath = (tool: Tool) => `/tools/${tool.id}`;

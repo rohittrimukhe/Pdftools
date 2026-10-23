@@ -22,3 +22,13 @@ describe('tool catalog', () => {
     expect(searchTools('')).toHaveLength(TOOLS.length);
   });
 });
+
+import { TOOL_SCREENS } from '../../tools/registry';
+import { isReady } from './catalog';
+
+describe('shipped tools', () => {
+  it('every tool marked ready has a screen, and every screen is in the catalog', () => {
+    for (const tool of TOOLS.filter(isReady)) expect(TOOL_SCREENS[tool.id], tool.id).toBeDefined();
+    for (const id of Object.keys(TOOL_SCREENS)) expect(findTool(id), id).toBeDefined();
+  });
+});

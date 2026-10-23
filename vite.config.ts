@@ -8,7 +8,8 @@ export default defineConfig({
   base: process.env.HAPPY_BASE ?? '/',
   plugins: [react()],
   define: { __APP_VERSION__: JSON.stringify(pkg.version) },
-  build: { target: 'es2022', sourcemap: true },
+  // The PDF engine (pdf-lib, pdf.js) is one large chunk loaded only when a tool opens; Home stays small.
+  build: { target: 'es2022', sourcemap: true, chunkSizeWarningLimit: 700 },
   test: {
     environment: 'node',
     include: ['src/**/*.test.ts', 'src/**/*.test.tsx'],

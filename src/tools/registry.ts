@@ -1,0 +1,18 @@
+import { lazy, type ComponentType, type LazyExoticComponent } from 'react';
+import type { Tool } from '../features/tools/catalog';
+
+type ToolScreen = LazyExoticComponent<ComponentType<{ tool: Tool }>>;
+
+/** The screen for each built tool, loaded only when opened. */
+export const TOOL_SCREENS: Record<string, ToolScreen> = {
+  merge: lazy(() => import('./Merge')),
+  split: lazy(() => import('./Split')),
+  organise: lazy(() => import('./Organise')),
+  extract: lazy(() => import('./Extract')),
+  compress: lazy(() => import('./Compress')),
+  sign: lazy(() => import('./Sign')),
+  watermark: lazy(() => import('./Watermark')),
+  'page-numbers': lazy(() => import('./PageNumbers')),
+  protect: lazy(() => import('./Protect')),
+  unlock: lazy(() => import('./Unlock')),
+};

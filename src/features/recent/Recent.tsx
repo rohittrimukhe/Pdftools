@@ -7,7 +7,7 @@ import { useToast } from '../../design/toast';
 import { FileIcon, iconKindForType } from '../../files/FileIcon';
 import { RETAIN_DAYS, clearRecent, keepRecent, listRecent, onRecentChange, removeRecent, type RecentFile } from '../../files/recent';
 import { formatBytes } from '../../lib/format';
-import { canShare, saveFile, shareFile } from '../../platform/save';
+import { canShare, saveFile, savedMessage, shareFile } from '../../platform/save';
 import { findTool } from '../tools/catalog';
 import { AdSlot } from '../../ads/AdSlot';
 import './recent.css';
@@ -53,7 +53,7 @@ export function Recent() {
                   <span className="hp-row__sub">{findTool(file.tool)?.name ?? 'Happy PDF'} · {formatBytes(file.size)} · {when.format(file.createdAt)}</span>
                 </span>
                 <span className="recent__actions">
-                  <IconButton label={`Save ${file.name}`} onClick={async () => { await saveFile(file.blob, file.name); toast(`Saved ${file.name}`); }}><Download aria-hidden size={20} /></IconButton>
+                  <IconButton label={`Save ${file.name}`} onClick={() => void saveFile(file.blob, file.name).then((r) => { const m = savedMessage(r, file.name); if (m) toast(m); }, () => toast('Couldn’t save the file. Please try again.'))}><Download aria-hidden size={20} /></IconButton>
                   {canShare(file.blob, file.name) && (
                     <IconButton label={`Share ${file.name}`} onClick={() => void shareFile(file.blob, file.name).catch(() => toast('Sharing didn’t work here. Use Save instead.'))}><Share2 aria-hidden size={20} /></IconButton>
                   )}

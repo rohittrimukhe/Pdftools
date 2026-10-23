@@ -10,9 +10,7 @@ describes.
 | [Make a pull request and pass the quality gate](pull-request.md) | Ready |
 | [Deploy the website to GitHub Pages](deploy-github-pages.md) | Ready |
 | [Turn ads on or off](ads.md) | Ready |
-| Build the Windows, Linux and macOS apps | Planned (step 9) |
-| Build and publish the Android app | Planned (step 9) |
-| Build and publish the iOS app | Planned (step 9) |
+| [Build the desktop and phone apps](native-apps.md) | Ready (store publishing once accounts exist) |
 | Connect a custom domain through Cloudflare | Planned (step 14) |
 
 ## Template

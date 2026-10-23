@@ -6,8 +6,14 @@ export const KIND_LABEL: Record<FileKind, string> = {
 
 const startsWith = (bytes: Uint8Array, signature: number[], offset = 0) => signature.every((b, i) => bytes[offset + i] === b);
 
-function containsAscii(bytes: Uint8Array, text: string): boolean {
-  const needle = Array.from(text, (c) => c.charCodeAt(0));
+/**
+ * "%PDF-" as bytes. Never write it as text in app code: the desktop shell guesses
+ * a file's type from its first kilobyte and would serve that script as a PDF.
+ */
+export const PDF_MAGIC = [0x25, 0x50, 0x44, 0x46, 0x2d];
+
+function containsAscii(bytes: Uint8Array, text: string | number[]): boolean {
+  const needle = typeof text === 'string' ? Array.from(text, (c) => c.charCodeAt(0)) : text;
   outer: for (let i = 0; i <= bytes.length - needle.length; i++) {
     for (let j = 0; j < needle.length; j++) if (bytes[i + j] !== needle[j]) continue outer;
     return true;
@@ -23,8 +29,8 @@ function containsAscii(bytes: Uint8Array, text: string): boolean {
  */
 export function detectKind(head: Uint8Array, name = ''): FileKind {
   const lower = name.toLowerCase();
-  // PDF: "%PDF-" may follow up to 1 KB of junk, which readers tolerate.
-  if (containsAscii(head.subarray(0, 1024), '%PDF-')) return 'pdf';
+  // PDF: the header may follow up to 1 KB of junk, which readers tolerate.
+  if (containsAscii(head.subarray(0, 1024), PDF_MAGIC)) return 'pdf';
   if (startsWith(head, [0xff, 0xd8, 0xff])) return 'image'; // JPEG
   if (startsWith(head, [0x89, 0x50, 0x4e, 0x47])) return 'image'; // PNG
   if (startsWith(head, [0x47, 0x49, 0x46, 0x38])) return 'image'; // GIF

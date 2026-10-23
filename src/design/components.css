@@ -147,3 +147,7 @@
 .tool__blurb { margin-bottom: var(--hp-s4); color: var(--hp-text-2); }
 a.hp-btn { text-decoration: none; }
 .hp-badge--alert { background: var(--hp-danger-quiet); color: var(--hp-danger); }
+
+/* Crash screen (ErrorBoundary) */
+.crash { max-width: 560px; margin: 0 auto; padding: var(--hp-s10) var(--hp-s4); }
+.crash__detail { font-size: var(--hp-text-sm); color: var(--hp-text-2); overflow-wrap: anywhere; }

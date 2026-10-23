@@ -1,0 +1,57 @@
+{
+  "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
+  "productName": "Happy PDF",
+  "mainBinaryName": "happy-pdf",
+  "version": "0.1.0",
+  "identifier": "com.rohittrimukhe.happypdf",
+  "build": {
+    "frontendDist": "../dist",
+    "devUrl": "http://localhost:5173",
+    "beforeDevCommand": "npm run dev",
+    "beforeBuildCommand": "npm run build"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "Happy PDF",
+        "width": 1180,
+        "height": 820,
+        "minWidth": 380,
+        "minHeight": 560,
+        "resizable": true,
+        "dragDropEnabled": false
+      }
+    ],
+    "security": {
+      "csp": {
+        "default-src": "'self'",
+        "script-src": "'self' 'wasm-unsafe-eval'",
+        "style-src": "'self' 'unsafe-inline'",
+        "img-src": "'self' blob: data:",
+        "font-src": "'self' data:",
+        "worker-src": "'self' blob:",
+        "connect-src": "'self' ipc: http://ipc.localhost blob: data:",
+        "object-src": "'none'",
+        "base-uri": "'self'",
+        "form-action": "'none'"
+      }
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["deb", "appimage", "rpm", "nsis", "msi", "dmg", "app"],
+    "publisher": "Rohit Trimukhe",
+    "copyright": "Copyright (c) 2026 Rohit Trimukhe. All rights reserved.",
+    "category": "Productivity",
+    "shortDescription": "Every document tool. Free. Private. Nothing uploaded.",
+    "longDescription": "Merge, split, compress, sign and convert PDFs and images on your own computer. Files never leave your device.",
+    "licenseFile": "../LICENSE",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ]
+  }
+}

@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { ResultCard } from '../../files/ResultCard';
+import { PDF_MAGIC } from '../../files/detect';
 import { uploadSnapshot } from '../../privacy/uploadMonitor';
 import { ChevronRight, FileStack, Minimize2, Moon, ShieldCheck, Sun, SunMoon } from 'lucide-react';
 import { Button, Chip, IconButton, Note, Progress, Sheet, Switch } from '../../design/ui';
@@ -24,7 +25,7 @@ export function DesignGallery() {
   const [chip, setChip] = useState('All');
   const [on, setOn] = useState(true);
   const [sheet, setSheet] = useState(false);
-  const sample = useMemo(() => new Blob(['%PDF-1.4\n% Happy PDF sample\n'], { type: 'application/pdf' }), []);
+  const sample = useMemo(() => new Blob([new Uint8Array(PDF_MAGIC), '1.4\n% Happy PDF sample\n'], { type: 'application/pdf' }), []);
   const [since] = useState(uploadSnapshot);
 
   return (

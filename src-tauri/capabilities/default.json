@@ -1,0 +1,11 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "What the app window may do: show the Save dialog and write the file the person chose. No network, no other file access.",
+  "windows": ["main"],
+  "permissions": [
+    "core:default",
+    "dialog:allow-save",
+    "fs:allow-write-file"
+  ]
+}

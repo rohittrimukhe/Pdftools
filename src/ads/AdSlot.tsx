@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { adAllowed, adsConfig, nonPersonalisedOnly, type Placement } from './config';
+import { isNative } from '../platform/runtime';
 import './ads.css';
 
 declare global {
@@ -25,7 +26,7 @@ function loadAdScript(client: string) {
  */
 export function AdSlot({ placement }: { placement: Placement }) {
   const ref = useRef<HTMLModElement>(null);
-  const allowed = adAllowed(adsConfig, placement);
+  const allowed = adAllowed(adsConfig, placement, { native: isNative });
   useEffect(() => {
     if (!allowed || !adsConfig.client) return;
     loadAdScript(adsConfig.client);

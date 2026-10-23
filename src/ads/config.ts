@@ -3,6 +3,8 @@
  * (VITE_ADSENSE_CLIENT, e.g. "ca-pub-1234567890123456"). Each placement also needs
  * its own ad unit ID. See docs/sop/ads.md.
  */
+import { isNative } from '../platform/runtime';
+
 export type Placement = 'home' | 'result' | 'recent';
 
 export interface AdsConfig {
@@ -24,13 +26,14 @@ const SLOT_ID = /^\d{6,20}$/;
 
 /** Is this placement allowed to show an ad right now? */
 export function adAllowed(config: AdsConfig, placement: Placement, { native = false } = {}): boolean {
-  if (native) return false; // The Android, iOS and desktop apps use their own ad SDKs (step 9).
+  if (native) return false; // Web ads never run inside the Android, iOS and desktop apps.
   if (!config.client || !CLIENT_ID.test(config.client)) return false;
   const slot = config.slots[placement];
   return Boolean(slot && SLOT_ID.test(slot));
 }
 
-export const adsOn = (config: AdsConfig = adsConfig) => (['home', 'result', 'recent'] as const).some((p) => adAllowed(config, p));
+export const adsOn = (config: AdsConfig = adsConfig, { native = isNative } = {}) =>
+  (['home', 'result', 'recent'] as const).some((p) => adAllowed(config, p, { native }));
 
 // Ad-serving hosts only. Kept narrow on purpose: anything else the page sends still counts on the badge.
 const AD_HOSTS = /(^|\.)(googlesyndication\.com|doubleclick\.net|googleadservices\.com|adtrafficquality\.google)$/;

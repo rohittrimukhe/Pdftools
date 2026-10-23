@@ -29,9 +29,22 @@ function sizeOf(body: unknown): number {
   return 1;
 }
 
+/**
+ * The desktop app hands a finished file to the system Save dialog over its own
+ * in-process channel (ipc://localhost, or http://ipc.localhost on Windows).
+ * Both stay inside this computer: *.localhost never leaves the machine.
+ */
+export function isLocalShellRequest(url: string, base = 'https://happypdf.invalid/'): boolean {
+  try {
+    const { protocol, hostname } = new URL(url, base);
+    return protocol === 'ipc:' || hostname === 'ipc.localhost';
+  } catch { return false; }
+}
+
 function record(body: unknown, url?: string | URL) {
   const n = sizeOf(body);
   if (n === 0) return;
+  if (url !== undefined && isLocalShellRequest(String(url), globalThis.location?.href)) return;
   const target = url !== undefined && isAdRequest(String(url), globalThis.location?.href) ? adTotals : totals;
   target.bytes += n;
   target.requests += 1;

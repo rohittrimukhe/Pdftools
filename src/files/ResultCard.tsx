@@ -3,7 +3,7 @@ import { CheckCircle2, Download, Share2 } from 'lucide-react';
 import { Button } from '../design/ui';
 import { useToast } from '../design/toast';
 import { formatBytes } from '../lib/format';
-import { baseName, canShare, safeFileName, saveFile, shareFile } from '../platform/save';
+import { baseName, canShare, safeFileName, saveFile, savedMessage, shareFile } from '../platform/save';
 import { UploadBadge } from '../privacy/UploadBadge';
 import type { UploadSnapshot } from '../privacy/uploadMonitor';
 import { addRecent } from './recent';
@@ -37,8 +37,12 @@ export function ResultCard({ blob, name, tool, since, summary }: ResultCardProps
   }, [blob, tool]);
 
   const save = async () => {
-    await saveFile(blob, finalName);
-    toast(`Saved ${finalName}`);
+    try {
+      const message = savedMessage(await saveFile(blob, finalName), finalName);
+      if (message) toast(message);
+    } catch {
+      toast('Couldn’t save the file. Please try again.');
+    }
   };
   const share = async () => {
     try {

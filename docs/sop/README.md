@@ -6,8 +6,8 @@ describes.
 
 | SOP | Status |
 |---|---|
-| Run the app locally | Planned (step 0) |
-| Make a pull request and pass the quality gate | Planned (step 0) |
+| [Run the app locally](run-locally.md) | Ready |
+| [Make a pull request and pass the quality gate](pull-request.md) | Ready |
 | Deploy the website to GitHub Pages | Planned (step 8) |
 | Turn ads on or off | Planned (step 7) |
 | Build the Windows, Linux and macOS apps | Planned (step 9) |

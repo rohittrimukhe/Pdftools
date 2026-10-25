@@ -105,3 +105,35 @@ export async function openImageTool(page: Page, id: string, files: Array<{ name:
   await page.getByRole('button', { name: 'Choose files' }).click();
   await (await chooser).setFiles(files);
 }
+
+/**
+ * A phone photo of a document, drawn in the browser: a tilted white page with
+ * printed lines on a dark table, darker towards one side (a shadow).
+ * `font` lets a test draw Hindi with a font it has loaded.
+ */
+export async function makeDocPhoto(page: Page, lines: string[], { font = 'sans-serif', width = 1200, height = 1600 } = {}): Promise<Buffer> {
+  const base64 = await page.evaluate(async ({ lines, font, width, height }) => {
+    const c = document.createElement('canvas');
+    c.width = width; c.height = height;
+    const x = c.getContext('2d')!;
+    x.fillStyle = '#3a3530'; x.fillRect(0, 0, width, height);
+    x.save();
+    x.translate(width / 2, height / 2);
+    x.rotate(-0.06);
+    const pw = width * 0.72, ph = height * 0.74;
+    x.fillStyle = '#f2efe8'; x.fillRect(-pw / 2, -ph / 2, pw, ph);
+    x.fillStyle = '#1a1a1a';
+    x.font = `${Math.round(width / 26)}px ${font}`;
+    lines.forEach((l, i) => x.fillText(l, -pw / 2 + pw * 0.08, -ph / 2 + ph * 0.12 + i * (width / 16)));
+    x.restore();
+    // Shadow: darker to the right, as when a phone blocks the light.
+    const g = x.createLinearGradient(0, 0, width, 0);
+    g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(0,0,0,0.35)');
+    x.fillStyle = g; x.fillRect(0, 0, width, height);
+    const blob = await new Promise<Blob>((r) => c.toBlob((b) => r(b!), 'image/jpeg', 0.9));
+    const bytes = new Uint8Array(await blob.arrayBuffer());
+    let s = ''; for (const b of bytes) s += String.fromCharCode(b);
+    return btoa(s);
+  }, { lines, font, width, height });
+  return Buffer.from(base64, 'base64');
+}

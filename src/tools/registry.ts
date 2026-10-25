@@ -20,6 +20,8 @@ export const TOOL_SCREENS: Record<string, ToolScreen> = {
   'pdf-to-image': lazy(() => import('./PdfToImage')),
   'convert-image': lazy(() => import('./ImageBatch').then((m) => ({ default: m.ConvertImage }))),
   'resize-image': lazy(() => import('./ImageBatch').then((m) => ({ default: m.ResizeImage }))),
+  scan: lazy(() => import('./Scan')),
+  ocr: lazy(() => import('./Ocr')),
   'resume-builder': lazy(() => import('./ResumeBuilder')),
   'resume-score': lazy(() => import('./ResumeScore')),
 };

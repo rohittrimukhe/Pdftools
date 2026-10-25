@@ -1,0 +1,24 @@
+.scan-add { display: grid; gap: var(--hp-s3); }
+.hp-card.scan-add { padding: var(--hp-s8) var(--hp-s5); justify-items: center; text-align: center; }
+.scan-add__lead { max-width: 46ch; color: var(--hp-text-2); }
+.scan-add .tool-actions { justify-content: center; }
+.scan-add--compact .tool-actions { justify-content: flex-start; }
+.scan-pages { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+.scan-pages .thumb__tools { display: grid; grid-template-columns: repeat(4, 36px); justify-content: center; }
+.scan-pages .thumb__tools .hp-icon-btn { width: 36px; height: 36px; }
+
+.scan-editor { display: grid; gap: var(--hp-s4); }
+@media (min-width: 900px) { .scan-editor { grid-template-columns: minmax(0, 3fr) minmax(260px, 2fr); align-items: start; } }
+.scan-editor__photo { padding: var(--hp-s3); border-radius: var(--hp-r-lg); background: #1d1b17; }
+.scan-editor__loading { aspect-ratio: 3 / 4; }
+.scan-editor__side { display: grid; gap: var(--hp-s4); padding: var(--hp-s4); border-radius: var(--hp-r-lg); background: var(--hp-card); }
+.scan-editor__result { display: grid; gap: var(--hp-s2); justify-items: start; }
+.scan-editor__result img { max-width: 100%; max-height: 320px; background: #fff; box-shadow: var(--hp-shadow-1); }
+.scan-crop { display: block; width: 100%; height: auto; max-height: 70dvh; touch-action: none; user-select: none; }
+.scan-crop__shade { fill: rgb(0 0 0 / 0.5); pointer-events: none; }
+.scan-crop__edge { fill: none; stroke: #ffc24d; stroke-width: 3; vector-effect: non-scaling-stroke; pointer-events: none; }
+.scan-crop__hit { fill: transparent; cursor: grab; }
+.scan-crop__dot { fill: #fff; stroke: #c27400; stroke-width: 3; vector-effect: non-scaling-stroke; pointer-events: none; }
+.scan-crop__handle:focus { outline: none; }
+.scan-crop__handle:focus-visible .scan-crop__dot { fill: #ffc24d; stroke: #000; }
+.scan-empty { display: grid; place-items: center; width: 100%; min-height: 160px; color: var(--hp-text-3); background: var(--hp-sunken); border-radius: var(--hp-r-md); }

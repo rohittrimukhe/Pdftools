@@ -50,3 +50,6 @@
 .image-list .hp-icon-btn:disabled { opacity: .35; cursor: default; }
 /* Secondary "add more" actions keep their own width; only the main action spans the column. */
 .tool > .hp-btn--tonal, .tool > .hp-btn--text { justify-self: start; }
+/* A row of secondary actions, and a section title inside a card. */
+.tool-actions { display: flex; flex-wrap: wrap; gap: var(--hp-s2); }
+.tool-card__title { font-size: var(--hp-text-lg); font-weight: 700; }

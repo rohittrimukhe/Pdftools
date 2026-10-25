@@ -10,3 +10,4 @@ playwright-report/
 !.env.example
 src/generated/
 public/pdfjs/
+public/ocr/

@@ -68,9 +68,9 @@ export function sitePlugin({ base, siteUrl }: { base: string; siteUrl: string })
         ],
       }, null, 2));
 
-      // The app shell is cached on first visit; pdf.js data files and fonts are cached the first time they are used.
+      // The app shell is cached on first visit; pdf.js data, the OCR engine (16 MB) and fonts are cached the first time they are used.
       const all = files(outDir).map((f) => relative(outDir, f).split('\\').join('/'));
-      const shell = all.filter((f) => !f.endsWith('.map') && f !== 'sw.js' && !f.startsWith('pdfjs/') && !/(^|\/)index\.html$/.test(f) || f === 'index.html');
+      const shell = all.filter((f) => !f.endsWith('.map') && f !== 'sw.js' && !f.startsWith('pdfjs/') && !f.startsWith('ocr/') && !/(^|\/)index\.html$/.test(f) || f === 'index.html');
       const version = createHash('sha256').update(shell.map((f) => `${f}:${statSync(join(outDir, f)).size}`).join('\n')).digest('hex').slice(0, 12);
       const sw = readFileSync(new URL('./sw.template.js', import.meta.url), 'utf8')
         .replace('__VERSION__', version)

@@ -30,7 +30,7 @@
 | Check | Result |
 |---|---|
 | Unit tests | 88 of 88 passed (10 new: corner order, perspective maths, page detection, straightening, clean-up modes, rotation) |
-| Browser tests | 156 of 156 passed, phone and desktop (10 new) |
+| Browser tests | 158 of 158 passed, phone and desktop (12 new) |
 | Scan, end to end | Two synthetic phone photos (tilted page, shadow): both found automatically, reordered, searchable A4 PDF; its text reads back exactly ("INVOICE 4521 … Total amount 1,250") |
 | OCR, English | "Meeting at 10 AM / Room 204, Pune office" read exactly from a photo; `.txt` saved |
 | OCR, image-only PDF | Becomes searchable at its original page size (595 × 793 pt); text reads back |
@@ -38,6 +38,7 @@
 | OCR offline | After one use, with the network off and the page reloaded, OCR still works |
 | Accessibility | Scan, OCR and the corner editor pass the WCAG 2.1 AA scan |
 | Desktop app type check | Still passes |
+| Real Linux desktop app, by hand | Photo opened from Smart Drop → Scan → searchable PDF saved with the system dialog; its text reads back exactly (`desktop-saved-scan-text.txt`, `desktop-linux-*.png`); 0 bytes uploaded |
 | Speed (this machine) | About 0.4–0.8 s per page once the engine has loaded |
 
 Screenshots: `scan-*-start.png`, `scan-*-pages.png`, `scan-*-editor.png`, `ocr-*-hindi.png`; test photo `sample-photo.jpg`.
@@ -49,3 +50,6 @@ Screenshots: `scan-*-start.png`, `scan-*-pages.png`, `scan-*-editor.png`, `ocr-*
 ## Bugs found and fixed
 1. **Thin line of table along the page edge** after auto-crop (seen in the corner editor's result). Detected corners now sit 1.2% towards the middle.
 2. **A Hindi test could fail at random:** once the offline service worker was running, it fetched the test's font from the network instead of the test's own copy. That test now runs without the service worker.
+3. **OCR opened empty when a photo came from Smart Drop (desktop app only).** The screen took the handed-over files while rendering, and React may pause and restart a render, which on the slower desktop engine left the files already taken. It now takes them after the screen appears, like every other tool. A browser test covers the path; it couldn't make the old code fail in Chrome, so the fix was confirmed in the real desktop app.
+4. **On/off switches barely responded in Safari and the desktop app.** The invisible checkbox in our Switch was sized only by its insets; WebKit (Safari, iPhone, Mac, Linux desktop app) keeps a checkbox at its tiny native size, so only one corner could be clicked. It now has an explicit size. This fixes every switch in the app, Settings included, for all Safari users. Confirmed in the desktop app.
+5. **Photos didn't suggest Scan.** Smart Drop now offers Scan document and OCR for photos (and no longer offers OCR or Exact-size for SVG drawings).

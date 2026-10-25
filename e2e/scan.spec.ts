@@ -115,3 +115,19 @@ test('OCR works offline after one use', async ({ page, context }) => {
     await context.setOffline(false);
   }
 });
+
+test('a photo opened from Smart Drop goes straight into Scan or OCR', async ({ page }) => {
+  await page.goto('/');
+  const photo = jpg('receipt.jpg', await makeDocPhoto(page, ['Receipt 7781', 'Paid in full']));
+  await choose(page, 'Choose files', [photo]);
+  await expect(page).toHaveURL(/\/open$/);
+  await page.getByRole('button', { name: /Text from scan \(OCR\)/ }).click();
+  await expect(page.getByRole('list', { name: 'Files to read' })).toContainText('receipt.jpg');
+  await page.getByRole('button', { name: 'Read text' }).click();
+  await expect(page.getByLabel('Recognised text')).toHaveValue(/Receipt 7781/, { timeout: 60_000 });
+
+  await page.goto('/');
+  await choose(page, 'Choose files', [photo]);
+  await page.getByRole('button', { name: /Scan document/ }).click();
+  await expect(page.getByRole('list', { name: 'Scanned pages' }).getByRole('listitem')).toHaveCount(1);
+});

@@ -7,7 +7,7 @@ import { FileIcon, iconKindForType } from '../files/FileIcon';
 import { formatBytes } from '../lib/format';
 import { baseName, saveFile } from '../platform/save';
 import { uploadSnapshot } from '../privacy/uploadMonitor';
-import { takeHandOff } from '../files/handoff';
+import { peekHandOff, takeHandOff } from '../files/handoff';
 import type { Tool } from '../features/tools/catalog';
 import { LANGUAGES, type OcrLanguage } from '../ocr/engine';
 import { IMAGE_ACCEPT } from '../images/codec';
@@ -27,7 +27,7 @@ const defaultLanguages = (): OcrLanguage[] => (typeof navigator !== 'undefined' 
 interface Read { text: string; lowConfidence: string[] }
 
 export default function Ocr({ tool }: { tool: Tool }) {
-  const [files, setFiles] = useState<File[]>(takeHandOff);
+  const [files, setFiles] = useState<File[]>([]);
   const [languages, setLanguages] = useState<OcrLanguage[]>(defaultLanguages);
   const [searchable, setSearchable] = useState(false);
   const [read, setRead] = useState<Read | null>(null);
@@ -35,6 +35,8 @@ export default function Ocr({ tool }: { tool: Tool }) {
   const runner = useRunner();
   const toast = useToast();
 
+  // Files opened from Smart Drop. Taken after the first render, never during it: React may render twice before showing the screen.
+  useEffect(() => { if (peekHandOff().length) setFiles(takeHandOff()); }, []);
   // The engine holds about 100 MB while warm; let it go when leaving the screen.
   useEffect(() => () => { void import('../ocr/engine').then((m) => m.stopOcr()); }, []);
 

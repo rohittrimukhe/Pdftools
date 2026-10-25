@@ -1,0 +1,21 @@
+
+> happy-pdf@0.1.0 test
+> vitest run
+
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - import "./build/site" without a file extension (vite.config.ts:5:28). Add the file extension
+  - import "../src/app/meta" without a file extension (build/site.ts:5:47). Add the file extension
+  - import "../features/tools/catalog" without a file extension (src/app/meta.ts:1:42). Add the file extension
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+
+ RUN  v5.0.5 /home/user/pdftools
+
+
+ Test Files  11 passed (11)
+      Tests  53 passed (53)
+   Start at  06:56:54
+   Duration  1.14s (import 42%, tests 34%, transform 21%, worker 3%)
+
+    Isolate  11 workers spawned · ~109ms startup each (spawn + environment, per file)
+             at least ~291ms faster with isolate: false — reuses workers across files instead of one per file
+

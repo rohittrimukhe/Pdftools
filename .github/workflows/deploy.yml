@@ -1,0 +1,57 @@
+name: Deploy website
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Unit tests
+        run: npm test
+      - name: Build for GitHub Pages
+        run: npm run build
+        env:
+          # With our own domain (repository variable HAPPY_DOMAIN) the site is served from the root;
+          # without it, from the project address https://<owner>.github.io/<repo>/. See docs/sop/custom-domain.md.
+          HAPPY_DOMAIN: ${{ vars.HAPPY_DOMAIN }}
+          HAPPY_BASE: ${{ vars.HAPPY_DOMAIN && '/' || format('/{0}/', github.event.repository.name) }}
+          HAPPY_SITE_URL: ${{ vars.HAPPY_DOMAIN && format('https://{0}', vars.HAPPY_DOMAIN) || format('https://{0}.github.io/{1}', github.repository_owner, github.event.repository.name) }}
+          # Ads stay off until these repository variables are set (docs/sop/ads.md).
+          VITE_ADSENSE_CLIENT: ${{ vars.VITE_ADSENSE_CLIENT }}
+          VITE_ADSENSE_SLOT_HOME: ${{ vars.VITE_ADSENSE_SLOT_HOME }}
+          VITE_ADSENSE_SLOT_RESULT: ${{ vars.VITE_ADSENSE_SLOT_RESULT }}
+          VITE_ADSENSE_SLOT_RECENT: ${{ vars.VITE_ADSENSE_SLOT_RECENT }}
+      - name: Leave out source maps
+        run: find dist -name '*.map' -delete
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,6 @@
+.ocr-files { list-style: none; margin: 0; padding: 0; }
+.ocr-files > li + li { box-shadow: inset 0 1px 0 var(--hp-divider); }
+.ocr-switch { display: flex; align-items: center; justify-content: space-between; gap: var(--hp-s4); }
+.ocr-switch .options__label { margin-bottom: 2px; }
+.ocr-switch .options__hint { display: block; margin: 0; }
+.ocr-text { font-family: inherit; min-height: 240px; }

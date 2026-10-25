@@ -1,0 +1,6 @@
+Text found on each page of report-watermarked.pdf saved by the Linux desktop app:
+[
+ "Desktop page 1 CONFIDENTIAL",
+ "Desktop page 2 CONFIDENTIAL",
+ "Desktop page 3 CONFIDENTIAL"
+]

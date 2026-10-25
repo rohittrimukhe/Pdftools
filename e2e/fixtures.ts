@@ -1,0 +1,139 @@
+import { readFile } from 'node:fs/promises';
+import { PDFDocument, StandardFonts } from '@cantoo/pdf-lib';
+import { unzipSync, zlibSync } from 'fflate';
+import type { Download, Page } from '@playwright/test';
+import { readPdf } from '../src/pdf/testing';
+
+/** A photo-like PNG (gradients plus grain): large as a PNG, small as a JPEG, like a phone scan. */
+export function makePng(width: number, height: number): Uint8Array {
+  const raw = new Uint8Array((width * 3 + 1) * height);
+  let seed = 7;
+  for (let y = 0; y < height; y++) {
+    const row = y * (width * 3 + 1);
+    for (let x = 0; x < width; x++) {
+      seed = (seed * 1103515245 + 12345) & 0x7fffffff;
+      const grain = (seed >> 16) % 40;
+      const i = row + 1 + x * 3;
+      raw[i] = (x * 255) / width * 0.7 + grain;
+      raw[i + 1] = (y * 255) / height * 0.7 + grain;
+      raw[i + 2] = 120 + grain;
+    }
+  }
+  const crcTable = Array.from({ length: 256 }, (_, n) => { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1; return c >>> 0; });
+  const crc = (bytes: Uint8Array) => { let c = 0xffffffff; for (const b of bytes) c = crcTable[(c ^ b) & 0xff]! ^ (c >>> 8); return (c ^ 0xffffffff) >>> 0; };
+  const chunk = (type: string, data: Uint8Array) => {
+    const out = new Uint8Array(12 + data.length);
+    const view = new DataView(out.buffer);
+    view.setUint32(0, data.length);
+    out.set(new TextEncoder().encode(type), 4);
+    out.set(data, 8);
+    view.setUint32(8 + data.length, crc(out.subarray(4, 8 + data.length)));
+    return out;
+  };
+  const header = new Uint8Array(13);
+  const hv = new DataView(header.buffer);
+  hv.setUint32(0, width); hv.setUint32(4, height); header[8] = 8; header[9] = 2;
+  const parts = [new Uint8Array([137, 80, 78, 71, 13, 10, 26, 10]), chunk('IHDR', header), chunk('IDAT', zlibSync(raw, { level: 6 })), chunk('IEND', new Uint8Array())];
+  const png = new Uint8Array(parts.reduce((n, p) => n + p.length, 0));
+  let at = 0;
+  for (const p of parts) { png.set(p, at); at += p.length; }
+  return png;
+}
+
+export async function makePdf(pages: number, { label = 'Page', heavy = false, password }: { label?: string; heavy?: boolean; password?: string } = {}) {
+  const doc = await PDFDocument.create();
+  const font = await doc.embedFont(StandardFonts.Helvetica);
+  let photo: Uint8Array | undefined;
+  for (let i = 1; i <= pages; i++) {
+    const page = doc.addPage([595, 842]);
+    page.drawText(`${label} ${i}`, { x: 50, y: 760, size: 24, font });
+    // "Heavy" pages carry a full-page photo, like a phone scan: big as PNG, much smaller as a JPEG.
+    if (heavy) page.drawImage(await doc.embedPng(photo ??= makePng(1240, 1754)), { x: 0, y: 0, width: 595, height: 842 });
+  }
+  if (password) doc.encrypt({ userPassword: password, ownerPassword: password });
+  return Buffer.from(await doc.save());
+}
+
+export const asFile = (name: string, buffer: Buffer) => ({ name, mimeType: 'application/pdf', buffer });
+
+/** Opens a tool and gives it files through its own picker. */
+export async function openTool(page: Page, id: string, files: Array<ReturnType<typeof asFile>>) {
+  await page.goto(`/tools/${id}`);
+  const chooser = page.waitForEvent('filechooser');
+  await page.getByRole('button', { name: /^Choose files?$/ }).click();
+  await (await chooser).setFiles(files);
+}
+
+export async function downloadBytes(download: Download) {
+  return new Uint8Array(await readFile((await download.path())!));
+}
+
+/** Presses Save on the result card and returns the saved file. */
+export async function saveResult(page: Page) {
+  const card = page.getByRole('region', { name: 'Your file is ready' });
+  await card.waitFor();
+  const download = page.waitForEvent('download');
+  await card.getByRole('button', { name: 'Save' }).click();
+  const file = await download;
+  return { name: file.suggestedFilename(), bytes: await downloadBytes(file), card };
+}
+
+export const texts = async (bytes: Uint8Array, password?: string) => (await readPdf(bytes, password)).map((p) => p.text);
+export const unzip = (bytes: Uint8Array) => unzipSync(bytes);
+export { readPdf };
+
+/** Width and height from a JPEG's frame header. */
+export function jpegSize(bytes: Uint8Array): { width: number; height: number } {
+  let i = 2;
+  while (i < bytes.length) {
+    if (bytes[i] !== 0xff) { i++; continue; }
+    const marker = bytes[i + 1]!;
+    const length = (bytes[i + 2]! << 8) | bytes[i + 3]!;
+    if (marker >= 0xc0 && marker <= 0xc3) return { height: (bytes[i + 5]! << 8) | bytes[i + 6]!, width: (bytes[i + 7]! << 8) | bytes[i + 8]! };
+    i += 2 + length;
+  }
+  throw new Error('Not a JPEG');
+}
+
+export const pngSize = (b: Uint8Array) => ({ width: new DataView(b.buffer, b.byteOffset).getUint32(16), height: new DataView(b.buffer, b.byteOffset).getUint32(20) });
+export const png = (name: string, w: number, h: number) => ({ name, mimeType: 'image/png', buffer: Buffer.from(makePng(w, h)) });
+
+/** Opens a tool that takes images and adds them through its picker. */
+export async function openImageTool(page: Page, id: string, files: Array<{ name: string; mimeType: string; buffer: Buffer }>) {
+  await page.goto(`/tools/${id}`);
+  const chooser = page.waitForEvent('filechooser');
+  await page.getByRole('button', { name: 'Choose files' }).click();
+  await (await chooser).setFiles(files);
+}
+
+/**
+ * A phone photo of a document, drawn in the browser: a tilted white page with
+ * printed lines on a dark table, darker towards one side (a shadow).
+ * `font` lets a test draw Hindi with a font it has loaded.
+ */
+export async function makeDocPhoto(page: Page, lines: string[], { font = 'sans-serif', width = 1200, height = 1600 } = {}): Promise<Buffer> {
+  const base64 = await page.evaluate(async ({ lines, font, width, height }) => {
+    const c = document.createElement('canvas');
+    c.width = width; c.height = height;
+    const x = c.getContext('2d')!;
+    x.fillStyle = '#3a3530'; x.fillRect(0, 0, width, height);
+    x.save();
+    x.translate(width / 2, height / 2);
+    x.rotate(-0.06);
+    const pw = width * 0.72, ph = height * 0.74;
+    x.fillStyle = '#f2efe8'; x.fillRect(-pw / 2, -ph / 2, pw, ph);
+    x.fillStyle = '#1a1a1a';
+    x.font = `${Math.round(width / 26)}px ${font}`;
+    lines.forEach((l, i) => x.fillText(l, -pw / 2 + pw * 0.08, -ph / 2 + ph * 0.12 + i * (width / 16)));
+    x.restore();
+    // Shadow: darker to the right, as when a phone blocks the light.
+    const g = x.createLinearGradient(0, 0, width, 0);
+    g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(0,0,0,0.35)');
+    x.fillStyle = g; x.fillRect(0, 0, width, height);
+    const blob = await new Promise<Blob>((r) => c.toBlob((b) => r(b!), 'image/jpeg', 0.9));
+    const bytes = new Uint8Array(await blob.arrayBuffer());
+    let s = ''; for (const b of bytes) s += String.fromCharCode(b);
+    return btoa(s);
+  }, { lines, font, width, height });
+  return Buffer.from(base64, 'base64');
+}

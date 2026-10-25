@@ -1,0 +1,9 @@
+
+Running 4 tests using 2 workers
+
+  ✓  1 [desktop] › e2e/smoke.spec.ts:3:1 › the app opens and states its promise (524ms)
+  ✓  2 [phone] › e2e/smoke.spec.ts:3:1 › the app opens and states its promise (530ms)
+  ✓  3 [desktop] › e2e/smoke.spec.ts:9:1 › opening the app talks to no other website (707ms)
+  ✓  4 [phone] › e2e/smoke.spec.ts:9:1 › opening the app talks to no other website (740ms)
+
+  4 passed (2.9s)

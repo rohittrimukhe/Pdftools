@@ -36,10 +36,10 @@ test('each tool has its own pre-rendered page for search engines', async ({ requ
   expect(html).toContain('<title>Compress PDF: free, private, nothing uploaded · Happy PDF</title>');
   expect(html).toContain('rel="canonical"');
   expect(html).not.toContain('noindex');
-  expect(await (await request.get('/tools/word-to-pdf/')).text()).toContain('<meta name="robots" content="noindex" />');
+  // Every tool is built, so every tool page is offered to search engines.
+  expect(await (await request.get('/tools/word-to-pdf/')).text()).not.toContain('noindex');
   const sitemap = await (await request.get('/sitemap.xml')).text();
-  expect(sitemap).toContain('/tools/merge/</loc>');
-  expect(sitemap).not.toContain('word-to-pdf');
+  for (const id of ['merge', 'word-to-pdf', 'scan', 'resume-builder']) expect(sitemap).toContain(`/tools/${id}/</loc>`);
   const manifest = await (await request.get('/manifest.webmanifest')).json();
   expect(manifest).toMatchObject({ name: 'Happy PDF', display: 'standalone' });
 });

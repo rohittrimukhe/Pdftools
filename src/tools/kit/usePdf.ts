@@ -1,3 +1,4 @@
+import { FriendlyError } from '../../lib/errors';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { PdfError } from '../../pdf/errors';
@@ -27,7 +28,8 @@ export function takePdfHandOff(): File[] {
   return peekHandOff().some(isPdfFile) ? takeHandOff().filter(isPdfFile) : [];
 }
 
-export const messageOf = (error: unknown) => (error instanceof PdfError ? error.message : 'Something went wrong while reading this file. Try it again, or try another file.');
+export const messageOf = (error: unknown) => (error instanceof PdfError || error instanceof FriendlyError
+  ? error.message : 'Something went wrong while reading this file. Try it again, or try another file.');
 
 /** One PDF for a tool: load, ask for a password if needed, and start the upload measurement. */
 export function usePdf() {

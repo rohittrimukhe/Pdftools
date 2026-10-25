@@ -1,7 +1,7 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 
-const ROUTES = ['/', '/open', '/recent', '/settings', '/about', '/privacy', '/licenses', '/tools/merge', '/tools/exact-size', '/tools/image-to-pdf', '/tools/resize-image', '/tools/resume-builder', '/tools/resume-score', '/tools/scan', '/tools/ocr', '/tools/word-to-pdf', '/nope'];
+const ROUTES = ['/', '/open', '/recent', '/settings', '/about', '/privacy', '/licenses', '/tools/merge', '/tools/exact-size', '/tools/image-to-pdf', '/tools/resize-image', '/tools/resume-builder', '/tools/resume-score', '/tools/scan', '/tools/ocr', '/tools/word-to-pdf', '/tools/pdf-to-word', '/nope'];
 
 test('the main navigation reaches every tab and marks the current one', async ({ page }) => {
   await page.goto('/');
@@ -39,7 +39,7 @@ test('a tool opens from Home and Back returns there', async ({ page }) => {
   await page.getByRole('link', { name: /Word to PDF/ }).click();
   await expect(page).toHaveURL(/\/tools\/word-to-pdf$/);
   await expect(page.getByRole('heading', { level: 1, name: 'Word to PDF' })).toBeVisible();
-  await expect(page.getByText('Coming soon')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Choose file' })).toBeVisible();
   await page.getByRole('button', { name: 'Home' }).click();
   await expect(page).toHaveURL(/\/$/);
 });

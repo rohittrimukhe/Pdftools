@@ -3,13 +3,14 @@
  * Reads JPG, PNG, WebP, GIF (first frame), BMP and SVG everywhere, and HEIC
  * where the browser can (Safari). Writes JPG, PNG, WebP and GIF.
  */
+import { FriendlyError } from '../lib/errors';
 export type OutputFormat = 'jpeg' | 'png' | 'webp' | 'gif';
 
 export const FORMAT_LABEL: Record<OutputFormat, string> = { jpeg: 'JPG', png: 'PNG', webp: 'WebP', gif: 'GIF' };
 export const FORMAT_EXT: Record<OutputFormat, string> = { jpeg: '.jpg', png: '.png', webp: '.webp', gif: '.gif' };
 export const IMAGE_ACCEPT = 'image/jpeg,image/png,image/webp,image/gif,image/bmp,image/svg+xml,image/heic,image/heif,.heic,.heif,.svg';
 
-export class ImageError extends Error {}
+export class ImageError extends FriendlyError {}
 
 export interface Decoded {
   source: CanvasImageSource;

@@ -39,7 +39,7 @@ No step is "done" until all of these are true:
 | 7 | Ad slots | Ad component with places on Home, Results and Help only; never during document work; consent prompt; off unless an ad ID is set | Screenshots with slots on and off; consent stored on the device only |
 | 8 | Web launch | GitHub Pages deploy from `main`, offline support (works in airplane mode after first load), SEO pages per tool | Live URL, Lighthouse report saved |
 | 9 | Desktop and mobile apps | Tauri builds for Windows, Linux and macOS; Capacitor projects for Android and iOS | Installers built in CI; app screenshots ([evidence](evidence/step-9/RESULT.md)) |
-| 10 | Resume Studio | Resume builder, ATS score and job-description match, all on the device | Scoring tests on sample resumes |
+| 10 | Resume Studio | Resume builder, ATS score and job-description match, all on the device | Scoring tests on sample resumes ([evidence](evidence/step-10/RESULT.md)) |
 | 11 | Scanner and OCR | Camera scan with edge crop, OCR including Hindi | OCR accuracy checks on sample scans |
 | 12 | Office files | Word, Excel and PowerPoint viewing and conversion, then editing | Fidelity checks on a sample document set |
 | 13 | Recipes and private AI | Chain steps into one tap; on-device summarise and translate where the device supports it | Recipe run tests; AI disabled cleanly where unsupported |

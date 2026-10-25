@@ -151,3 +151,5 @@ a.hp-btn { text-decoration: none; }
 /* Crash screen (ErrorBoundary) */
 .crash { max-width: 560px; margin: 0 auto; padding: var(--hp-s10) var(--hp-s4); }
 .crash__detail { font-size: var(--hp-text-sm); color: var(--hp-text-2); overflow-wrap: anywhere; }
+textarea.hp-input { padding-block: var(--hp-s3); min-height: 104px; resize: vertical; line-height: 1.5; }
+textarea.hp-input:focus { padding-block: calc(var(--hp-s3) - 1px); }

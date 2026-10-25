@@ -1,6 +1,8 @@
 import { ShieldCheck, WifiOff, Infinity as InfinityIcon, BadgeIndianRupee } from 'lucide-react';
 import { Page, TopBar } from '../../app/shell/AppShell';
 import { Logo } from '../../design/Logo';
+import { Link } from '../../app/router';
+import { FEEDBACK_URL } from '../../app/links';
 import './about.css';
 
 const PROMISES = [
@@ -19,7 +21,7 @@ export function About() {
         <div>
           <p className="about__name">Happy PDF</p>
           <p className="about__tag">Every document tool. Free. Private. Nothing uploaded.</p>
-          <p className="about__version">Version {__APP_VERSION__}</p>
+          <p className="about__version">Version {__APP_VERSION__} · Public preview</p>
         </div>
       </div>
       <ul className="about__promises">
@@ -31,6 +33,12 @@ export function About() {
           </li>
         ))}
       </ul>
+      <nav className="about__links" aria-label="More about Happy PDF">
+        <a href={FEEDBACK_URL} target="_blank" rel="noreferrer">Report a problem or suggest a tool</a>
+        <Link to="/privacy">Privacy policy</Link>
+        <Link to="/terms">Terms of use</Link>
+        <Link to="/licenses">Open-source licenses</Link>
+      </nav>
       <p className="about__legal">© 2026 Rohit Trimukhe. All rights reserved.</p>
     </Page>
   );

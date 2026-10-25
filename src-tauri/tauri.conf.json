@@ -2,7 +2,7 @@
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "Happy PDF",
   "mainBinaryName": "happy-pdf",
-  "version": "0.1.0",
+  "version": "0.9.0",
   "identifier": "com.rohittrimukhe.happypdf",
   "build": {
     "frontendDist": "../dist",

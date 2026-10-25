@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from 'react';
-import { ChevronRight, FileLock2, Info, Moon, Palette, ScrollText, Sun, SunMoon } from 'lucide-react';
+import { ChevronRight, FileLock2, Info, Moon, Palette, Scale, ScrollText, Sun, SunMoon } from 'lucide-react';
 import { LargeTitle, Page } from '../../app/shell/AppShell';
 import { Link } from '../../app/router';
 import { Button, Chip, Switch } from '../../design/ui';
@@ -70,6 +70,7 @@ export function Settings() {
       <ul className="hp-group settings__links">
         <NavRow to="/about" icon={<Info aria-hidden size={22} />} title="About Happy PDF" sub="Version and what we stand for" />
         <NavRow to="/privacy" icon={<FileLock2 aria-hidden size={22} />} title="Privacy policy" sub="What happens to your files" />
+        <NavRow to="/terms" icon={<Scale aria-hidden size={22} />} title="Terms of use" sub="Free to use, in plain language" />
         <NavRow to="/licenses" icon={<ScrollText aria-hidden size={22} />} title="Open-source licenses" sub="Libraries Happy PDF is built with" />
         <NavRow to="/design" icon={<Palette aria-hidden size={22} />} title="Design system" sub="Colours, type and components" />
       </ul>

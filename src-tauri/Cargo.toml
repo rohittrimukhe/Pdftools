@@ -1,6 +1,6 @@
 [package]
 name = "happy-pdf"
-version = "0.1.0"
+version = "0.9.0"
 description = "Happy PDF desktop app: every document tool, free, private, nothing uploaded."
 authors = ["Rohit Trimukhe"]
 license-file = "../LICENSE"

@@ -11,7 +11,7 @@ describes.
 | [Deploy the website to GitHub Pages](deploy-github-pages.md) | Ready |
 | [Turn ads on or off](ads.md) | Ready |
 | [Build the desktop and phone apps](native-apps.md) | Ready (store publishing once accounts exist) |
-| Connect a custom domain through Cloudflare | Planned (step 14) |
+| [Put Happy PDF on our own domain, behind Cloudflare](custom-domain.md) | Ready |
 
 ## Template
 

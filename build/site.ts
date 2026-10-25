@@ -18,7 +18,41 @@ function files(dir: string): string[] {
  * description, canonical link), a 404 fallback for client-side routes, the
  * sitemap, robots.txt, the web app manifest and the offline service worker.
  */
-export function sitePlugin({ base, siteUrl }: { base: string; siteUrl: string }): Plugin {
+/**
+ * The security headers for hosts that read a `_headers` file (Cloudflare Pages, Netlify), and the
+ * values to copy into a Cloudflare transform rule in front of GitHub Pages (docs/sop/custom-domain.md).
+ * The policy allows only our own files, plus Google's ad hosts when ads are switched on.
+ */
+export function securityHeaders(inlineScripts: string[], ads: boolean): Record<string, string> {
+  const hashes = inlineScripts.map((code) => `'sha256-${createHash('sha256').update(code).digest('base64')}'`);
+  const adScripts = ads ? ' https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.adtrafficquality.google https://*.googletagservices.com' : '';
+  const adFrames = ads ? 'https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://*.googlesyndication.com https://www.google.com' : "'none'";
+  const csp = [
+    "default-src 'self'",
+    `script-src 'self' 'wasm-unsafe-eval' ${hashes.join(' ')}${adScripts}`,
+    "style-src 'self' 'unsafe-inline'",
+    `img-src 'self' data: blob:${ads ? ' https:' : ''}`,
+    "font-src 'self' data:",
+    "worker-src 'self' blob:",
+    `connect-src 'self' blob: data:${ads ? ' https://*.googlesyndication.com https://*.adtrafficquality.google https://*.doubleclick.net' : ''}`,
+    `frame-src ${adFrames}`,
+    "object-src 'none'",
+    "base-uri 'self'",
+    "form-action 'none'",
+    "frame-ancestors 'none'",
+    'upgrade-insecure-requests',
+  ].join('; ');
+  return {
+    'Content-Security-Policy': csp,
+    'X-Content-Type-Options': 'nosniff',
+    'Referrer-Policy': 'strict-origin-when-cross-origin',
+    'Permissions-Policy': 'camera=(self), microphone=(), geolocation=(), payment=(), usb=()',
+    'X-Frame-Options': 'DENY',
+    'Strict-Transport-Security': 'max-age=31536000',
+  };
+}
+
+export function sitePlugin({ base, siteUrl, ads = false }: { base: string; siteUrl: string; ads?: boolean }): Plugin {
   let outDir = 'dist';
   return {
     name: 'happy-site',
@@ -48,6 +82,16 @@ export function sitePlugin({ base, siteUrl }: { base: string; siteUrl: string })
       }
       // GitHub Pages serves 404.html for unknown paths; the app then shows its own "Page not found".
       writeFileSync(join(outDir, '404.html'), page('/', ROUTE_META[0]!.title, ROUTE_META[0]!.description));
+
+      // Security headers, with the hash of the one inline script (the theme, set before the page draws).
+      const inline = [...template.matchAll(/<script>([\s\S]*?)<\/script>/g)].map((m) => m[1]!);
+      const headers = securityHeaders(inline, ads);
+      writeFileSync(join(outDir, '_headers'), [
+        `${base}*`, ...Object.entries(headers).map(([k, v]) => `  ${k}: ${v}`),
+        `${base}assets/*`, '  Cache-Control: public, max-age=31536000, immutable',
+        `${base}sw.js`, '  Cache-Control: no-cache',
+        '',
+      ].join('\n'));
 
       const today = new Date().toISOString().slice(0, 10);
       writeFileSync(join(outDir, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${ROUTE_META.filter((m) => m.index !== false).map((m) => `  <url><loc>${site}${m.path === '/' ? '/' : `${m.path}/`}</loc><lastmod>${today}</lastmod></url>`).join('\n')}\n</urlset>\n`);

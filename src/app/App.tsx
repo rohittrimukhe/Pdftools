@@ -10,6 +10,7 @@ const Settings = lazy(() => import('../features/settings/Settings').then((m) => 
 const Recent = lazy(() => import('../features/recent/Recent').then((m) => ({ default: m.Recent })));
 const About = lazy(() => import('../features/about/About').then((m) => ({ default: m.About })));
 const Privacy = lazy(() => import('../features/about/Privacy').then((m) => ({ default: m.Privacy })));
+const Terms = lazy(() => import('../features/about/Terms').then((m) => ({ default: m.Terms })));
 const Licenses = lazy(() => import('../features/about/Licenses').then((m) => ({ default: m.Licenses })));
 const DesignGallery = lazy(() => import('../features/gallery/DesignGallery').then((m) => ({ default: m.DesignGallery })));
 const OpenFiles = lazy(() => import('../features/open/OpenFiles').then((m) => ({ default: m.OpenFiles })));
@@ -21,6 +22,7 @@ function Screen({ path }: { path: string }) {
   if (path === '/settings') return <Settings />;
   if (path === '/about') return <About />;
   if (path === '/privacy') return <Privacy />;
+  if (path === '/terms') return <Terms />;
   if (path === '/licenses') return <Licenses />;
   if (path === '/design') return <DesignGallery />;
   if (path === '/open') return <OpenFiles />;

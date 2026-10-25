@@ -13,12 +13,12 @@ storage. Hosting is free at any realistic traffic level.
 Limits (GitHub docs):
 - Published site up to 1 GB.
 - Soft bandwidth limit of 100 GB per month.
-- No custom response headers. This matters for two things:
+- No custom response headers. Every build writes the headers to `dist/_headers`; Cloudflare adds them (Stage 2). This matters for two things:
   - Security headers (CSP and others) cannot be set by GitHub Pages.
   - Multi-threaded WebAssembly needs cross-origin isolation headers. Until Stage 2 we
     run single-threaded, which works everywhere, only slower on big jobs.
 
-## Stage 2: Cloudflare (as soon as we buy a domain)
+## Stage 2: Cloudflare (domain bought: steps in docs/sop/custom-domain.md)
 
 The only real cost is the domain name (roughly ₹800–1,500 a year). Everything below
 is on Cloudflare's free plan.

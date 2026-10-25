@@ -35,4 +35,7 @@
          Storage permissions are only asked on old Android versions, to save into Documents/Happy PDF. -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="29" />
+    <!-- "Take a photo" in Scan document. Asked for only when tapped; the photo stays on the device. -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
 </manifest>

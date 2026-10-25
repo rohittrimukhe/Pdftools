@@ -1,7 +1,8 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
+import { TOOLS } from '../src/features/tools/catalog';
 
-const ROUTES = ['/', '/open', '/recent', '/settings', '/about', '/privacy', '/licenses', '/tools/merge', '/tools/exact-size', '/tools/image-to-pdf', '/tools/resize-image', '/tools/resume-builder', '/tools/resume-score', '/tools/scan', '/tools/ocr', '/tools/word-to-pdf', '/tools/pdf-to-word', '/nope'];
+const ROUTES = ['/', '/open', '/recent', '/settings', '/about', '/privacy', '/terms', '/licenses', '/tools/merge', '/tools/exact-size', '/tools/image-to-pdf', '/tools/resize-image', '/tools/resume-builder', '/tools/resume-score', '/tools/scan', '/tools/ocr', '/tools/word-to-pdf', '/tools/pdf-to-word', '/nope'];
 
 test('the main navigation reaches every tab and marks the current one', async ({ page }) => {
   await page.goto('/');
@@ -82,3 +83,15 @@ for (const scheme of ['light', 'dark'] as const) {
     }
   });
 }
+
+test('every tool in the catalogue opens its own working screen', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  for (const tool of TOOLS) {
+    await page.goto(`/tools/${tool.id}`);
+    await expect(page.getByRole('heading', { level: 1, name: tool.name })).toBeVisible();
+    await expect(page.getByText('Coming soon')).toHaveCount(0);
+    await expect(page.getByRole('button').filter({ hasText: /^(Choose files?|Choose photos|Take a photo|Create PDF|Check my resume|Fill with an example)$/ }).first()).toBeVisible();
+  }
+  expect(errors).toEqual([]);
+});

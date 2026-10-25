@@ -7,11 +7,12 @@ export const TAGLINE = 'Every document tool. Free. Private. Nothing uploaded.';
 export interface RouteMeta { path: string; title: string; description: string; index?: boolean }
 
 const STATIC_ROUTES: RouteMeta[] = [
-  { path: '/', title: `${APP_NAME}: free PDF and document tools that run on your device`, description: `${TAGLINE} Merge, split, compress, sign, convert and resize PDFs and images with no sign-up, no limits and no uploads.` },
+  { path: '/', title: `${APP_NAME}: free PDF and document tools that run on your device`, description: `${TAGLINE} Merge, compress, sign and convert PDFs, Word, Excel and PowerPoint; scan documents, read text with OCR and build resumes. No sign-up, no limits, no uploads.` },
   { path: '/recent', title: `Recent files · ${APP_NAME}`, description: 'Files you made with Happy PDF, kept only on this device.' },
   { path: '/settings', title: `Settings · ${APP_NAME}`, description: 'Theme, privacy and recent-file settings for Happy PDF.' },
   { path: '/about', title: `About · ${APP_NAME}`, description: `${TAGLINE} Free, no sign-up, works offline.` },
   { path: '/privacy', title: `Privacy policy · ${APP_NAME}`, description: 'Happy PDF processes your files on your device. Nothing is uploaded and no account is needed.' },
+  { path: '/terms', title: `Terms of use · ${APP_NAME}`, description: 'Happy PDF is free to use, with no account. The terms in plain language.' },
   { path: '/licenses', title: `Open-source licenses · ${APP_NAME}`, description: 'The open-source libraries Happy PDF is built with.' },
 ];
 

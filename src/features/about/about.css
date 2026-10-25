@@ -19,3 +19,7 @@
 .licenses__name { font-weight: 650; overflow-wrap: anywhere; }
 .licenses__meta { font-size: var(--hp-text-sm); color: var(--hp-text-3); }
 .licenses__text { margin: 0 var(--hp-s4) var(--hp-s4); padding: var(--hp-s3); max-height: 320px; overflow: auto; border-radius: var(--hp-r-sm); background: var(--hp-sunken); font-size: var(--hp-text-xs); white-space: pre-wrap; overflow-wrap: anywhere; }
+.prose ul { margin: 0; padding-inline-start: var(--hp-s5); color: var(--hp-text-2); display: grid; gap: var(--hp-s1); max-width: 68ch; }
+.prose a { color: var(--hp-primary); }
+.about__links { display: flex; flex-wrap: wrap; gap: var(--hp-s2) var(--hp-s4); margin-top: var(--hp-s4); }
+.about__links a { color: var(--hp-primary); font-weight: 600; }
